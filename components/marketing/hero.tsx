@@ -30,11 +30,16 @@ export function Hero() {
         </p>
 
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Button size="lg" render={<Link href="/sign-up" />}>
+          <Button size="lg" nativeButton={false} render={<Link href="/sign-up" />}>
             Start Free Trial
             <ArrowRight />
           </Button>
-          <Button size="lg" variant="outline" render={<Link href="/sign-in" />}>
+          <Button
+            size="lg"
+            variant="outline"
+            nativeButton={false}
+            render={<Link href="/sign-in" />}
+          >
             Login
           </Button>
         </div>

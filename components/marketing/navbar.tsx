@@ -30,10 +30,12 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" render={<Link href="/sign-in" />}>
+          <Button variant="ghost" nativeButton={false} render={<Link href="/sign-in" />}>
             Login
           </Button>
-          <Button render={<Link href="/sign-up" />}>Start Free Trial</Button>
+          <Button nativeButton={false} render={<Link href="/sign-up" />}>
+            Start Free Trial
+          </Button>
         </div>
       </div>
     </header>

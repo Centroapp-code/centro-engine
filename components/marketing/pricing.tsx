@@ -113,6 +113,7 @@ export function Pricing() {
               <Button
                 className="w-full"
                 variant={plan.highlighted ? "default" : "outline"}
+                nativeButton={false}
                 render={<Link href="/sign-up" />}
               >
                 {plan.cta}
