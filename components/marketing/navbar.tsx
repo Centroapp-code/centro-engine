@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/marketing/logo";
+import { Logo } from "@/components/logo";
 
 const NAV_LINKS = [
   { href: "#how-it-works", label: "How it works" },

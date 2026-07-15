@@ -27,9 +27,29 @@ Get these from the [Clerk Dashboard](https://dashboard.clerk.com) → your appli
 | `CLERK_SECRET_KEY` | Server-only secret key. Never expose to the client. |
 | `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | App route for the sign-in page. Defaults to `/sign-in`. |
 | `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | App route for the sign-up page. Defaults to `/sign-up`. |
+| `CLERK_WEBHOOK_SECRET` | Signing secret for the `user.created` webhook at `/api/webhooks/clerk`, which assigns the default `CUSTOMER` role to every new sign-up. Get it from Dashboard → Webhooks → your endpoint → Signing Secret, after creating an endpoint pointed at `https://<your-domain>/api/webhooks/clerk` subscribed to the `user.created` event. |
 
 Clerk provides separate key pairs for development and production instances —
-use the matching pair for each Vercel environment.
+use the matching pair for each Vercel environment, and create a separate
+webhook endpoint (with its own signing secret) per environment.
+
+### Roles (CUSTOMER / ADMIN)
+
+Centro stores each user's role in Clerk's `publicMetadata.role`. Two
+one-time setup steps are required in the Clerk Dashboard — they can't be
+done from code:
+
+1. **Session token claim**: Dashboard → Configure → Sessions → Customize
+   session token → add `{"metadata": "{{user.public_metadata}}"}`. Without
+   this, `sessionClaims.metadata` is empty and every user is treated as the
+   default `CUSTOMER` role.
+2. **Promoting an admin**: new sign-ups always default to `CUSTOMER` (set by
+   the webhook above). To make someone an `ADMIN`, open Dashboard → Users →
+   the user → Metadata → Public metadata, and set:
+   ```json
+   { "role": "ADMIN" }
+   ```
+   There is no self-serve way to become an admin — this is intentional.
 
 ## AI (OpenAI)
 

@@ -37,14 +37,17 @@ app/
   api/             API route handlers
   sign-in/         Clerk sign-in
   sign-up/         Clerk sign-up
-proxy.ts           Clerk middleware — protects /dashboard and /admin
+  api/webhooks/clerk/  Assigns the default CUSTOMER role on sign-up
+proxy.ts           Clerk middleware — protects /dashboard and /admin,
+                   and enforces CUSTOMER → /dashboard, ADMIN → /admin
 
 components/
   ui/              Reusable shadcn/ui components
+  auth/            AppHeader, SignOutButton — shared dashboard/admin chrome
 
 lib/
   db/              Prisma client singleton + generated client
-  auth/            Clerk server helpers
+  auth/            Clerk server helpers, roles, and route guards
   utils.ts         Shared utilities
 
 services/
@@ -78,7 +81,13 @@ prisma/
    npx prisma db push
    ```
 
-4. Run the dev server:
+4. Complete the one-time Clerk Dashboard setup described in
+   [ENVIRONMENT.md](./ENVIRONMENT.md#roles-customer--admin) — a session
+   token claim for roles, and a webhook endpoint for the `CLERK_WEBHOOK_SECRET`.
+   For local development, use the Clerk CLI or a tunnel (e.g. `ngrok`) so
+   Clerk can reach `http://localhost:3000/api/webhooks/clerk`.
+
+5. Run the dev server:
 
    ```bash
    npm run dev

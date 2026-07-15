@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Logo } from "@/components/marketing/logo";
+import { Logo } from "@/components/logo";
 
 const FOOTER_LINKS = [
   {
