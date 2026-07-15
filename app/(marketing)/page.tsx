@@ -1,23 +1,17 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Hero } from "@/components/marketing/hero";
+import { HowItWorks } from "@/components/marketing/how-it-works";
+import { Features } from "@/components/marketing/features";
+import { Pricing } from "@/components/marketing/pricing";
+import { FAQ } from "@/components/marketing/faq";
 
 export default function MarketingHomePage() {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
-      <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-        Centro
-      </h1>
-      <p className="max-w-xl text-balance text-muted-foreground">
-        Centro is an AI sales phone agent that answers, qualifies, and routes
-        your inbound sales calls — without replacing your existing phone
-        system.
-      </p>
-      <div className="flex gap-3">
-        <Button render={<Link href="/sign-up" />}>Get started</Button>
-        <Button variant="outline" render={<Link href="/sign-in" />}>
-          Sign in
-        </Button>
-      </div>
-    </main>
+    <>
+      <Hero />
+      <HowItWorks />
+      <Features />
+      <Pricing />
+      <FAQ />
+    </>
   );
 }
