@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Centro
 
-## Getting Started
+Centro is an AI-powered sales phone agent SaaS. Companies route their
+existing "Press 6 for Sales" phone menu option to Centro, which answers
+inbound sales calls, qualifies the caller, collects contact details, scores
+the lead, summarizes the call, and transfers qualified leads to a human
+sales rep.
 
-First, run the development server:
+The project has two main parts:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Marketing site** — explains the product, pricing, and handles sign-up/login.
+- **Centro dashboard** — where customers configure their AI agent, phone
+  routing, and view calls, transcripts, and leads.
+- **Admin app** — internal tool for Centro staff to manage customers,
+  companies, subscriptions, and usage.
+
+## Tech stack
+
+| Layer | Choice |
+| --- | --- |
+| Frontend | Next.js (App Router) + TypeScript |
+| UI | Tailwind CSS + shadcn/ui |
+| Backend | Next.js server actions and API routes |
+| Database | PostgreSQL + Prisma ORM |
+| Hosting | Vercel |
+| Auth | Clerk |
+| AI | OpenAI API |
+| Phone | Twilio Voice API |
+
+## Project structure
+
+```
+app/
+  (marketing)/     Public marketing pages
+  dashboard/       Customer dashboard (protected)
+  admin/           Internal admin app (protected)
+  api/             API route handlers
+  sign-in/         Clerk sign-in
+  sign-up/         Clerk sign-up
+proxy.ts           Clerk middleware — protects /dashboard and /admin
+
+components/
+  ui/              Reusable shadcn/ui components
+
+lib/
+  db/              Prisma client singleton + generated client
+  auth/            Clerk server helpers
+  utils.ts         Shared utilities
+
+services/
+  ai/              OpenAI-based qualification, scoring, summarization
+  phone/           Twilio Voice call handling
+  crm/             CRM integrations for pushing qualified leads
+
+prisma/
+  schema.prisma    Database schema
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Getting started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Install dependencies:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   npm install
+   ```
 
-## Learn More
+2. Copy the environment template and fill in your own values (see
+   [ENVIRONMENT.md](./ENVIRONMENT.md) for what each variable does and where
+   to get it):
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   cp .env.example .env
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Push the Prisma schema to your database once `DATABASE_URL` is set:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   npx prisma db push
+   ```
 
-## Deploy on Vercel
+4. Run the dev server:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   Open [http://localhost:3000](http://localhost:3000).
+
+## Connecting this project to GitHub
+
+This repo is already initialized locally (`git init` has been run and the
+initial commit exists). To push it to GitHub:
+
+1. Create a new, empty repository on GitHub (do **not** initialize it with a
+   README, license, or `.gitignore` — this project already has its own).
+2. Add it as a remote and push:
+
+   ```bash
+   git remote add origin https://github.com/<your-org-or-username>/<repo-name>.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+3. Verify on GitHub that `.env` and `lib/db/generated` were **not** uploaded
+   — both are excluded via `.gitignore`. Only `.env.example` should appear.
+
+## Preparing for Vercel deployment
+
+The project is structured to deploy on Vercel with no custom configuration,
+but deployment itself is a separate, explicit step — this section is
+preparation only.
+
+When you're ready to deploy:
+
+1. Push the repo to GitHub (above).
+2. In Vercel, import the GitHub repository as a new project. Vercel
+   auto-detects Next.js — the default build (`next build`) and install
+   (`npm install`) commands work as-is.
+3. Before the first deploy, add every variable listed in
+   [ENVIRONMENT.md](./ENVIRONMENT.md) under Project → Settings →
+   Environment Variables, using production credentials (production Clerk
+   keys, a production Postgres `DATABASE_URL`, live OpenAI/Twilio keys).
+4. `npm install` runs `postinstall` → `prisma generate` automatically on
+   Vercel, so the generated Prisma client is always in sync with
+   `prisma/schema.prisma` — no manual step needed.
+5. Database schema changes should be applied with `npx prisma migrate deploy`
+   (or `db push` during early development) against the production database
+   before or as part of the deploy — Vercel does not run this automatically.
+
+## Learn more
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Clerk Documentation](https://clerk.com/docs)
+- [shadcn/ui Documentation](https://ui.shadcn.com)
