@@ -1,11 +1,12 @@
-import { LayoutDashboard, Bot, Phone, Users } from "lucide-react";
+import { LayoutDashboard, Phone, Target, BarChart3, Settings } from "lucide-react";
 import { NavLink } from "@/components/nav-link";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: <LayoutDashboard className="size-4" /> },
-  { href: "/dashboard/agent", label: "AI Agent", icon: <Bot className="size-4" /> },
   { href: "/dashboard/calls", label: "Calls", icon: <Phone className="size-4" /> },
-  { href: "/dashboard/leads", label: "Leads", icon: <Users className="size-4" /> },
+  { href: "/dashboard/opportunities", label: "Opportunities", icon: <Target className="size-4" /> },
+  { href: "/dashboard/analytics", label: "Analytics", icon: <BarChart3 className="size-4" /> },
+  { href: "/dashboard/settings", label: "Settings", icon: <Settings className="size-4" /> },
 ];
 
 export function DashboardSidebar() {

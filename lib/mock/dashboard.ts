@@ -3,16 +3,38 @@
 
 export type MockOverviewStats = {
   totalCalls: number;
-  leadsGenerated: number;
-  qualifiedLeads: number;
-  conversionRate: number;
+  opportunitiesCaptured: number;
+  qualifiedOpportunities: number;
+  avgOpportunityScore: number;
 };
 
 export const mockOverviewStats: MockOverviewStats = {
   totalCalls: 482,
-  leadsGenerated: 216,
-  qualifiedLeads: 93,
-  conversionRate: 19.3,
+  opportunitiesCaptured: 216,
+  qualifiedOpportunities: 93,
+  avgOpportunityScore: 62,
+};
+
+export type MockCompanyProfile = {
+  name: string;
+  industry: string;
+};
+
+export const mockCompanyProfile: MockCompanyProfile = {
+  name: "Acme Inc",
+  industry: "Logistics",
+};
+
+export type MockPhoneNumberInfo = {
+  phoneNumber: string;
+  provider: string;
+  status: "ACTIVE" | "PENDING" | "INACTIVE";
+};
+
+export const mockPhoneNumber: MockPhoneNumberInfo = {
+  phoneNumber: "+1 (555) 201-9000",
+  provider: "Twilio",
+  status: "ACTIVE",
 };
 
 export type MockAgentConfig = {
@@ -26,16 +48,16 @@ export type MockAgentConfig = {
 export const mockAgentConfig: MockAgentConfig = {
   name: "Centro Agent",
   greeting:
-    "Thanks for calling! I'm Centro, an AI sales assistant. How can I help you today?",
+    "Thanks for calling! I'm Centro, an AI assistant screening sales calls for this team. Who am I speaking with, and what are you calling about?",
   companyDescription:
     "Acme Inc. builds workflow automation software for mid-market logistics companies.",
   productsServices:
-    "Route Optimizer, Fleet Dashboard, and Dispatch Copilot subscription plans.",
+    "We're not looking to buy freight brokerage, fuel cards, or generic SaaS point solutions right now — the team already owns Route Optimizer, Fleet Dashboard, and Dispatch Copilot.",
   qualificationQuestions: [
-    "What problem are you hoping to solve?",
-    "How many vehicles or shipments do you manage per month?",
-    "What's your timeline for making a decision?",
-    "Who else is involved in this decision?",
+    "What are you offering, in one sentence?",
+    "Which team or person is this relevant to?",
+    "Is this a cold outreach or a referral?",
+    "What's the price range or budget expectation?",
   ],
 };
 
@@ -57,9 +79,9 @@ export const mockCalls: MockCall[] = [
     date: "2026-07-13T15:20:00Z",
     duration: 274,
     transcript:
-      "Agent: Thanks for calling Acme, this is Centro. How can I help?\nCaller: Hi, we're looking for a way to track our delivery fleet in real time.\nAgent: Great, how many vehicles are you currently managing?\nCaller: About 40 trucks across two states.\nAgent: Got it. What's driving the search right now — cost, visibility, or something else?\nCaller: Mostly visibility. We keep missing delivery windows.\nAgent: Understood. I'll pass this along to a specialist who can walk you through Fleet Dashboard.",
+      "Agent: Thanks for calling Acme, this is Centro screening sales calls for the team. Who am I speaking with and what are you calling about?\nCaller: Hi, I'm with a logistics data platform — we'd love to show your team real-time fleet visibility tooling.\nAgent: Got it. Is this a cold outreach or is someone here expecting your call?\nCaller: Cold outreach, but I think it's a strong fit.\nAgent: Understood. What's the rough budget or pricing range for this?\nCaller: Enterprise plans start around $2,000/month.\nAgent: I'll pass this along with a summary — someone may follow up if it's a priority right now.",
     summary:
-      "Caller manages 40 trucks across two states and needs better real-time visibility to avoid missed delivery windows. Strong fit for Fleet Dashboard.",
+      "Vendor pitching a real-time fleet visibility platform, cold outreach, ~$2,000/month enterprise pricing. Overlaps with existing Fleet Dashboard tooling — low priority unless there's a clear gap.",
   },
   {
     id: "call_2",
@@ -68,9 +90,9 @@ export const mockCalls: MockCall[] = [
     date: "2026-07-12T18:05:00Z",
     duration: 132,
     transcript:
-      "Agent: Thanks for calling Acme, this is Centro. How can I help?\nCaller: Just gathering pricing info for now.\nAgent: Sure — can I ask what size fleet you're working with?\nCaller: We don't have one yet, just researching for a project next year.\nAgent: Understood, I'll send over some material for later.",
+      "Agent: Thanks for calling Acme, this is Centro screening sales calls for the team. Who am I speaking with and what are you calling about?\nCaller: Just gathering info for a swag/promotional products vendor.\nAgent: Understood — is there a specific person expecting this outreach?\nCaller: No, general outreach.\nAgent: Got it, I'll log this as a low-priority vendor inquiry.",
     summary:
-      "Early-stage researcher, no active fleet yet, evaluating for a project next year. Low urgency.",
+      "Promotional products vendor, general cold outreach, no internal contact expecting it. Low priority.",
   },
   {
     id: "call_3",
@@ -79,8 +101,8 @@ export const mockCalls: MockCall[] = [
     date: "2026-07-12T09:42:00Z",
     duration: 61,
     transcript:
-      "Agent: Thanks for calling Acme, this is Centro. How can I help?\nCaller: Wrong number, sorry.\nAgent: No problem, have a good day.",
-    summary: "Misdialed call, no sales opportunity.",
+      "Agent: Thanks for calling Acme, this is Centro screening sales calls for the team. Who am I speaking with?\nCaller: Sorry, wrong number.\nAgent: No problem, have a good day.",
+    summary: "Misdialed call, not a sales opportunity.",
   },
   {
     id: "call_4",
@@ -89,41 +111,41 @@ export const mockCalls: MockCall[] = [
     date: "2026-07-11T21:15:00Z",
     duration: 398,
     transcript:
-      "Agent: Thanks for calling Acme, this is Centro. How can I help?\nCaller: We need to replace our current dispatch software, it's too manual.\nAgent: Understood. How many dispatchers are on your team today?\nCaller: Six, handling around 300 shipments a day.\nAgent: What's your target timeline?\nCaller: We'd like something in place within the quarter.\nAgent: Great, I'll connect you with a specialist to scope Dispatch Copilot.",
+      "Agent: Thanks for calling Acme, this is Centro screening sales calls for the team. Who am I speaking with and what are you calling about?\nCaller: I'm following up on a referral from your VP of Ops — we do dispatch software implementation consulting.\nAgent: Great, that helps. What's the rough scope and budget for an engagement like this?\nCaller: Typically $15-30k for a quarter-long engagement.\nAgent: Understood, this sounds relevant given the referral — I'll flag it as high priority for the team to review.",
     summary:
-      "Team of 6 dispatchers handling 300 shipments/day wants to replace manual dispatch software within the quarter. High-intent, ready for Dispatch Copilot demo.",
+      "Dispatch software implementation consultant, referred by the VP of Ops, $15-30k quarterly engagement. Warm referral — high priority, worth a live follow-up.",
   },
 ];
 
-export type MockLeadStatus =
+export type MockOpportunityStatus =
   | "NEW"
   | "CONTACTED"
   | "QUALIFIED"
   | "WON"
   | "LOST";
 
-export type MockLead = {
+export type MockOpportunity = {
   id: string;
   name: string | null;
   email: string | null;
   phone: string | null;
   score: number | null;
-  status: MockLeadStatus;
+  status: MockOpportunityStatus;
   createdAt: string;
 };
 
-export const mockLeads: MockLead[] = [
+export const mockOpportunities: MockOpportunity[] = [
   {
-    id: "lead_1",
+    id: "opp_1",
     name: "Jordan Reyes",
     email: "jordan.reyes@example.com",
     phone: "+1 (555) 201-4432",
-    score: 88,
-    status: "QUALIFIED",
+    score: 41,
+    status: "CONTACTED",
     createdAt: "2026-07-13T15:24:00Z",
   },
   {
-    id: "lead_2",
+    id: "opp_2",
     name: "Marcus Chen",
     email: "marcus.chen@example.com",
     phone: "+1 (555) 662-7734",
@@ -132,30 +154,145 @@ export const mockLeads: MockLead[] = [
     createdAt: "2026-07-11T21:20:00Z",
   },
   {
-    id: "lead_3",
+    id: "opp_3",
     name: "Priya Nair",
     email: "priya.nair@example.com",
     phone: "+1 (555) 887-2210",
-    score: 34,
-    status: "CONTACTED",
+    score: 18,
+    status: "LOST",
     createdAt: "2026-07-12T18:10:00Z",
   },
   {
-    id: "lead_4",
+    id: "opp_4",
     name: "Dana Whitfield",
     email: "dana.whitfield@example.com",
     phone: "+1 (555) 552-9021",
-    score: 61,
+    score: 76,
     status: "NEW",
     createdAt: "2026-07-14T10:05:00Z",
   },
   {
-    id: "lead_5",
+    id: "opp_5",
     name: "Sam Okafor",
     email: null,
     phone: "+1 (555) 118-6620",
-    score: null,
-    status: "LOST",
+    score: 88,
+    status: "WON",
     createdAt: "2026-07-09T13:47:00Z",
   },
+  {
+    id: "opp_6",
+    name: "Leah Fontaine",
+    email: "leah.fontaine@example.com",
+    phone: "+1 (555) 774-2093",
+    score: 55,
+    status: "NEW",
+    createdAt: "2026-07-14T09:12:00Z",
+  },
+  {
+    id: "opp_7",
+    name: "Theo Bracken",
+    email: "theo.bracken@example.com",
+    phone: "+1 (555) 330-8871",
+    score: 29,
+    status: "NEW",
+    createdAt: "2026-07-13T08:40:00Z",
+  },
+  {
+    id: "opp_8",
+    name: "Renata Kovac",
+    email: "renata.kovac@example.com",
+    phone: "+1 (555) 902-1145",
+    score: 47,
+    status: "CONTACTED",
+    createdAt: "2026-07-12T16:33:00Z",
+  },
+  {
+    id: "opp_9",
+    name: "Oliver Bassett",
+    email: null,
+    phone: "+1 (555) 447-6602",
+    score: 22,
+    status: "LOST",
+    createdAt: "2026-07-10T11:02:00Z",
+  },
+  {
+    id: "opp_10",
+    name: "Grace Odusanya",
+    email: "grace.odusanya@example.com",
+    phone: "+1 (555) 205-3387",
+    score: 81,
+    status: "QUALIFIED",
+    createdAt: "2026-07-11T14:15:00Z",
+  },
+];
+
+/** Number of opportunities per status, in a fixed funnel display order. */
+export function getOpportunityStatusCounts(): { status: MockOpportunityStatus; count: number }[] {
+  const order: MockOpportunityStatus[] = ["NEW", "CONTACTED", "QUALIFIED", "WON", "LOST"];
+  return order.map((status) => ({
+    status,
+    count: mockOpportunities.filter((opp) => opp.status === status).length,
+  }));
+}
+
+export type MockActivityItem = {
+  id: string;
+  type: "call" | "opportunity" | "score";
+  message: string;
+  timestamp: string;
+};
+
+export const mockRecentActivity: MockActivityItem[] = [
+  {
+    id: "activity_1",
+    type: "opportunity",
+    message: "Dana Whitfield scored as a new opportunity",
+    timestamp: "2026-07-14T10:05:00Z",
+  },
+  {
+    id: "activity_2",
+    type: "call",
+    message: "Call answered from +1 (555) 201-4432 (Jordan Reyes)",
+    timestamp: "2026-07-13T15:20:00Z",
+  },
+  {
+    id: "activity_3",
+    type: "score",
+    message: "Marcus Chen's opportunity scored 94 — marked Qualified",
+    timestamp: "2026-07-11T21:22:00Z",
+  },
+  {
+    id: "activity_4",
+    type: "call",
+    message: "Call answered from +1 (555) 887-2210 (Priya Nair)",
+    timestamp: "2026-07-12T18:05:00Z",
+  },
+  {
+    id: "activity_5",
+    type: "score",
+    message: "Priya Nair's opportunity scored 18 — marked Lost",
+    timestamp: "2026-07-12T18:12:00Z",
+  },
+];
+
+export const mockRecommendations: string[] = [
+  "Marcus Chen's opportunity scored 94 and came from a warm referral — follow up live today.",
+  "3 of the last 10 calls were cold vendor outreach with no internal contact expecting them — consider tightening the qualifying question on referrals.",
+  "Average opportunity score dipped this week — review the qualification questions for missed context.",
+];
+
+export type MockDailyCallVolume = {
+  date: string;
+  count: number;
+};
+
+export const mockCallVolume: MockDailyCallVolume[] = [
+  { date: "2026-07-08", count: 9 },
+  { date: "2026-07-09", count: 14 },
+  { date: "2026-07-10", count: 11 },
+  { date: "2026-07-11", count: 18 },
+  { date: "2026-07-12", count: 7 },
+  { date: "2026-07-13", count: 16 },
+  { date: "2026-07-14", count: 12 },
 ];

@@ -24,7 +24,7 @@ const columns: DataTableColumn<MockCall>[] = [
   },
   {
     header: "Summary",
-    className: "max-w-xs",
+    className: "max-w-xs whitespace-normal",
     cell: (call) => (
       <p className="line-clamp-2 text-sm text-muted-foreground">
         {call.summary}

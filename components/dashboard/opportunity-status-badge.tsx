@@ -1,7 +1,7 @@
 import { StatusBadge, type StatusTone } from "@/components/status-badge";
-import type { MockLeadStatus } from "@/lib/mock/dashboard";
+import type { MockOpportunityStatus } from "@/lib/mock/dashboard";
 
-const STATUS_TONES: Record<MockLeadStatus, StatusTone> = {
+const STATUS_TONES: Record<MockOpportunityStatus, StatusTone> = {
   NEW: "info",
   CONTACTED: "warning",
   QUALIFIED: "success",
@@ -9,7 +9,7 @@ const STATUS_TONES: Record<MockLeadStatus, StatusTone> = {
   LOST: "neutral",
 };
 
-const STATUS_LABELS: Record<MockLeadStatus, string> = {
+const STATUS_LABELS: Record<MockOpportunityStatus, string> = {
   NEW: "New",
   CONTACTED: "Contacted",
   QUALIFIED: "Qualified",
@@ -17,6 +17,6 @@ const STATUS_LABELS: Record<MockLeadStatus, string> = {
   LOST: "Lost",
 };
 
-export function LeadStatusBadge({ status }: { status: MockLeadStatus }) {
+export function OpportunityStatusBadge({ status }: { status: MockOpportunityStatus }) {
   return <StatusBadge label={STATUS_LABELS[status]} tone={STATUS_TONES[status]} />;
 }
