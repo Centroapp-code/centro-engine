@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { DataTable, type DataTableColumn } from "@/components/dashboard/data-table";
+import { DataTable, type DataTableColumn } from "@/components/data-table";
 import { LeadStatusBadge } from "@/components/dashboard/lead-status-badge";
 import { mockLeads, type MockLead } from "@/lib/mock/dashboard";
 

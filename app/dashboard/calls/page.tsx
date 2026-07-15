@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { DataTable, type DataTableColumn } from "@/components/dashboard/data-table";
+import { DataTable, type DataTableColumn } from "@/components/data-table";
 import { CallDetailsDialog } from "@/components/dashboard/call-details-dialog";
 import { mockCalls, type MockCall } from "@/lib/mock/dashboard";
 import { formatDate, formatDuration } from "@/lib/format";

@@ -1,13 +1,12 @@
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge, type StatusTone } from "@/components/status-badge";
 import type { MockLeadStatus } from "@/lib/mock/dashboard";
-import { cn } from "@/lib/utils";
 
-const STATUS_STYLES: Record<MockLeadStatus, string> = {
-  NEW: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  CONTACTED: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  QUALIFIED: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  WON: "bg-primary/10 text-primary",
-  LOST: "bg-muted text-muted-foreground",
+const STATUS_TONES: Record<MockLeadStatus, StatusTone> = {
+  NEW: "info",
+  CONTACTED: "warning",
+  QUALIFIED: "success",
+  WON: "success",
+  LOST: "neutral",
 };
 
 const STATUS_LABELS: Record<MockLeadStatus, string> = {
@@ -19,9 +18,5 @@ const STATUS_LABELS: Record<MockLeadStatus, string> = {
 };
 
 export function LeadStatusBadge({ status }: { status: MockLeadStatus }) {
-  return (
-    <Badge variant="outline" className={cn("border-transparent", STATUS_STYLES[status])}>
-      {STATUS_LABELS[status]}
-    </Badge>
-  );
+  return <StatusBadge label={STATUS_LABELS[status]} tone={STATUS_TONES[status]} />;
 }

@@ -1,5 +1,5 @@
 import { LayoutDashboard, Bot, Phone, Users } from "lucide-react";
-import { NavLink } from "@/components/dashboard/nav-link";
+import { NavLink } from "@/components/nav-link";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: <LayoutDashboard className="size-4" /> },

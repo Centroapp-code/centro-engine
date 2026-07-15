@@ -1,4 +1,4 @@
-import { StatCard } from "@/components/dashboard/stat-card";
+import { StatCard } from "@/components/stat-card";
 import { mockOverviewStats } from "@/lib/mock/dashboard";
 
 export default function DashboardPage() {
