@@ -16,6 +16,7 @@ When deploying, set the same variables in the Vercel project settings
 | Variable | Description |
 | --- | --- |
 | `DATABASE_URL` | PostgreSQL connection string used by Prisma. Format: `postgresql://user:password@host:5432/dbname?schema=public`. For local dev, run Postgres locally or use `npx prisma dev`. For production, use a hosted Postgres provider (Vercel Postgres, Neon, Supabase, RDS, etc). |
+| `SHADOW_DATABASE_URL` | Optional. Only used by `prisma migrate dev` to create/reset a throwaway shadow database when generating new migrations locally. Not needed for `prisma migrate deploy` or in production. |
 
 ## Authentication (Clerk)
 

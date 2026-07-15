@@ -57,7 +57,30 @@ services/
 
 prisma/
   schema.prisma    Database schema
+  migrations/      Version-controlled SQL migrations
 ```
+
+## Data model
+
+Multi-tenant: everything hangs off `Company`, and a `User` (synced from
+Clerk via `clerkId`) can belong to one or more companies through
+`CompanyMember`.
+
+- **User** — one row per Clerk identity; `role` mirrors the Clerk
+  `publicMetadata.role` used by auth (see [proxy.ts](./proxy.ts)).
+- **Company** — a customer organization using Centro.
+- **CompanyMember** — join table linking users to the companies they belong to.
+- **AIAgent** — a company's configured AI sales agent (greeting,
+  instructions, qualification questions, active/inactive).
+- **PhoneIntegration** — a phone number routed to Centro for a company,
+  and which provider (currently Twilio only, modeled as an enum so more
+  providers can be added later) handles it.
+- **Call** — a single inbound call, its transcript and AI-generated summary.
+- **Lead** — a qualified opportunity captured from a call, with score and status.
+
+All child tables (`AIAgent`, `PhoneIntegration`, `Call`, `Lead`,
+`CompanyMember`) index and cascade-delete on `companyId`/`userId`, so
+removing a company or user cleans up its data automatically.
 
 ## Getting started
 
@@ -75,11 +98,15 @@ prisma/
    cp .env.example .env
    ```
 
-3. Push the Prisma schema to your database once `DATABASE_URL` is set:
+3. Apply the committed migrations to your database once `DATABASE_URL` is set:
 
    ```bash
-   npx prisma db push
+   npx prisma migrate deploy
    ```
+
+   When you change `prisma/schema.prisma` yourself, generate a new migration
+   with `npx prisma migrate dev --name <description>` instead (requires
+   `SHADOW_DATABASE_URL` — see [ENVIRONMENT.md](./ENVIRONMENT.md)).
 
 4. Complete the one-time Clerk Dashboard setup described in
    [ENVIRONMENT.md](./ENVIRONMENT.md#roles-customer--admin) — a session
@@ -132,9 +159,9 @@ When you're ready to deploy:
 4. `npm install` runs `postinstall` → `prisma generate` automatically on
    Vercel, so the generated Prisma client is always in sync with
    `prisma/schema.prisma` — no manual step needed.
-5. Database schema changes should be applied with `npx prisma migrate deploy`
-   (or `db push` during early development) against the production database
-   before or as part of the deploy — Vercel does not run this automatically.
+5. Apply committed migrations to the production database with
+   `npx prisma migrate deploy` before or as part of the deploy — Vercel
+   does not run this automatically.
 
 ## Learn more
 

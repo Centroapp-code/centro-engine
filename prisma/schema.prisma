@@ -11,3 +11,126 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum PhoneProvider {
+  TWILIO
+}
+
+enum PhoneIntegrationStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  WON
+  LOST
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+
+  companyMemberships CompanyMember[]
+
+  @@map("users")
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  industry  String?
+  createdAt DateTime @default(now())
+
+  members           CompanyMember[]
+  aiAgents          AIAgent[]
+  phoneIntegrations PhoneIntegration[]
+  calls             Call[]
+  leads             Lead[]
+
+  @@map("companies")
+}
+
+model CompanyMember {
+  userId    String
+  companyId String
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@id([userId, companyId])
+  @@index([companyId])
+  @@map("company_members")
+}
+
+model AIAgent {
+  id                     String  @id @default(cuid())
+  companyId              String
+  name                   String
+  greeting               String
+  instructions           String
+  qualificationQuestions Json    @default("[]")
+  active                 Boolean @default(true)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("ai_agents")
+}
+
+model PhoneIntegration {
+  id          String                 @id @default(cuid())
+  companyId   String
+  phoneNumber String                 @unique
+  provider    PhoneProvider          @default(TWILIO)
+  status      PhoneIntegrationStatus @default(PENDING)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("phone_integrations")
+}
+
+model Call {
+  id          String   @id @default(cuid())
+  companyId   String
+  callerName  String?
+  callerPhone String
+  duration    Int?
+  transcript  String?
+  summary     String?
+  createdAt   DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("calls")
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  companyId String
+  name      String?
+  email     String?
+  phone     String?
+  score     Int?
+  status    LeadStatus @default(NEW)
+  notes     String?
+  createdAt DateTime   @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("leads")
+}
