@@ -38,6 +38,7 @@ app/
   sign-in/         Clerk sign-in
   sign-up/         Clerk sign-up
   api/webhooks/clerk/  Assigns the default CUSTOMER role on sign-up
+  api/twilio/      incoming-call and call-status webhooks (see below)
 proxy.ts           Clerk middleware — protects /dashboard and /admin,
                    and enforces CUSTOMER → /dashboard, ADMIN → /admin
 
@@ -51,8 +52,10 @@ lib/
   utils.ts         Shared utilities
 
 services/
-  ai/              OpenAI-based qualification, scoring, summarization
-  phone/           Twilio Voice call handling
+  ai/              agent.ts (load config), conversation.ts (greeting) —
+                   OpenAI-based qualification/scoring is a future addition
+  phone/           PhoneProvider interface, registry, call storage, and
+                   the Twilio implementation under providers/
   crm/             CRM integrations for pushing qualified leads
 
 prisma/
@@ -81,6 +84,31 @@ Clerk via `clerkId`) can belong to one or more companies through
 All child tables (`AIAgent`, `PhoneIntegration`, `Call`, `Lead`,
 `CompanyMember`) index and cascade-delete on `companyId`/`userId`, so
 removing a company or user cleans up its data automatically.
+
+## Phone integration
+
+Centro never replaces a company's own phone system. The flow is:
+
+```
+Company phone menu ("Press 6 for Sales")
+  -> forwarded to a Centro phone number
+  -> Centro AI answers
+```
+
+Twilio is configured to call two webhooks (see
+[ENVIRONMENT.md](./ENVIRONMENT.md#phone-twilio-voice) for setup):
+
+- **`/api/twilio/incoming-call`** — on each new call: identifies the company
+  from the `To` number (`PhoneIntegration`), loads its active `AIAgent`,
+  speaks the greeting, and creates a `Call` row.
+- **`/api/twilio/call-status`** — on call completion, fills in the `Call`
+  row's `duration`.
+
+Both routes are thin: signature verification, form parsing, and TwiML live
+in `services/phone/providers/twilio-*`, while company lookup and agent
+loading are plain service functions (`services/phone`, `services/ai`) that
+know nothing about Twilio. Swapping providers means writing a new
+`PhoneProvider` implementation, not touching the routes.
 
 ## Getting started
 

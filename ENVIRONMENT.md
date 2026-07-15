@@ -64,9 +64,21 @@ Get these from the [Twilio Console](https://console.twilio.com).
 
 | Variable | Description |
 | --- | --- |
-| `TWILIO_ACCOUNT_SID` | Account identifier. |
-| `TWILIO_AUTH_TOKEN` | Server-only secret used to authenticate API requests. |
-| `TWILIO_PHONE_NUMBER` | The Twilio number Centro answers calls on, in E.164 format (e.g. `+15551234567`). |
+| `TWILIO_ACCOUNT_SID` | Account identifier. Reserved for provisioning/transfer/end-call features, not used yet. |
+| `TWILIO_AUTH_TOKEN` | Server-only secret. Used today to verify the `X-Twilio-Signature` header on both webhooks below, so every incoming request is confirmed to actually come from Twilio. |
+| `TWILIO_PHONE_NUMBER` | Reserved for provisioning a number via the API; not used by the webhooks, which identify the company from the `To` number Twilio sends on each request instead. |
+
+### Webhooks
+
+Point a Twilio phone number's Voice configuration at:
+
+- **A call comes in** → `https://<your-domain>/api/twilio/incoming-call`
+- **Call status changes** → `https://<your-domain>/api/twilio/call-status`
+
+Both require `TWILIO_AUTH_TOKEN` to be set — requests with a missing or
+invalid signature are rejected with `403` before any business logic runs.
+For local development, use a tunnel (e.g. `ngrok`) so Twilio can reach
+`http://localhost:3000`.
 
 ## Notes
 

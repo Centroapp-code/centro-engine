@@ -9,10 +9,11 @@
  *
  * PhoneProvider abstracts the network operations that make this possible
  * (creating numbers, receiving/transferring/ending calls) so a concrete
- * provider (Twilio, etc.) can be registered later without changing any
- * calling code. No provider is implemented yet.
+ * provider (Twilio, etc.) can be registered without changing any calling
+ * code. See providers/twilio-provider.ts for the Twilio implementation.
  */
 export * from "./types";
 export * from "./provider";
 export * from "./registry";
 export * from "./call-store";
+export * from "./lookup";

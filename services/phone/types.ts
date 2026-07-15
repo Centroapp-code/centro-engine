@@ -34,12 +34,15 @@ export type EndCallParams = {
   providerCallId: string;
 };
 
-/** Call data captured for a completed (or in-progress) call, ready to persist. */
-export type CallRecord = {
+/** Recorded the moment a call starts, before its outcome is known. */
+export type NewCallParams = {
   companyId: string;
+  providerCallId: string;
   callerPhone: string;
-  callerName?: string;
-  duration?: number;
-  transcript?: string;
-  summary?: string;
+};
+
+/** Recorded once the provider reports the call as complete. */
+export type CompleteCallParams = {
+  providerCallId: string;
+  duration: number;
 };

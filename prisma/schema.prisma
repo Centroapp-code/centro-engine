@@ -103,14 +103,15 @@ model PhoneIntegration {
 }
 
 model Call {
-  id          String   @id @default(cuid())
-  companyId   String
-  callerName  String?
-  callerPhone String
-  duration    Int?
-  transcript  String?
-  summary     String?
-  createdAt   DateTime @default(now())
+  id             String   @id @default(cuid())
+  companyId      String
+  providerCallId String?  @unique
+  callerName     String?
+  callerPhone    String
+  duration       Int?
+  transcript     String?
+  summary        String?
+  createdAt      DateTime @default(now())
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
