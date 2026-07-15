@@ -15,18 +15,18 @@ export function Hero() {
 
       <div className="mx-auto flex max-w-4xl flex-col items-center px-6 py-24 text-center sm:py-32">
         <Badge variant="secondary" className="mb-6">
-          AI Sales Phone Agent
+          AI Sales Gatekeeper
         </Badge>
 
         <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
-          AI sales agents that turn inbound calls into qualified
-          opportunities.
+          An AI gatekeeper for every inbound sales call.
         </h1>
 
         <p className="mt-6 max-w-2xl text-lg text-balance text-muted-foreground sm:text-xl">
-          Centro connects to your existing phone system and automatically
-          handles sales calls, qualifies leads, and connects your team with
-          better opportunities.
+          Centro connects to your existing phone system and answers calls
+          from vendors and salespeople on your behalf — qualifying every
+          pitch, scoring the opportunity, and summarizing it in your
+          dashboard before your team ever picks up.
         </p>
 
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">

@@ -18,11 +18,11 @@ const PLANS = [
     name: "Starter",
     price: "$199",
     period: "/month",
-    description: "For small sales teams getting started with AI call handling.",
+    description: "For small teams that want to stop fielding every vendor call themselves.",
     features: [
-      "1 AI sales agent",
+      "1 AI gatekeeper",
       "Up to 250 calls / month",
-      "Lead qualification & scoring",
+      "Pitch qualification & scoring",
       "Call summaries",
       "Email support",
     ],
@@ -35,9 +35,9 @@ const PLANS = [
     period: "/month",
     description: "For growing teams that need CRM integration and more volume.",
     features: [
-      "3 AI sales agents",
+      "3 AI gatekeepers",
       "Up to 1,500 calls / month",
-      "Lead qualification & scoring",
+      "Pitch qualification & scoring",
       "Call summaries & transcripts",
       "CRM integration",
       "Priority support",
@@ -49,9 +49,9 @@ const PLANS = [
     name: "Enterprise",
     price: "Custom",
     period: "",
-    description: "For organizations with complex routing and volume needs.",
+    description: "For organizations fielding high call volume across teams.",
     features: [
-      "Unlimited AI sales agents",
+      "Unlimited AI gatekeepers",
       "Custom call volume",
       "Advanced CRM & workflow integrations",
       "Dedicated onboarding",
@@ -68,7 +68,7 @@ export function Pricing() {
       <SectionHeading
         eyebrow="Pricing"
         title="Simple plans that scale with your call volume"
-        description="Every plan includes lead qualification, scoring, and call summaries out of the box."
+        description="Every plan includes pitch qualification, scoring, and call summaries out of the box."
       />
 
       <div className="mt-16 grid gap-6 lg:grid-cols-3">

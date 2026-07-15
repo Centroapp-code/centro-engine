@@ -34,8 +34,7 @@ export function Footer() {
           <div className="max-w-xs">
             <Logo />
             <p className="mt-4 text-sm text-muted-foreground">
-              AI sales agents that turn inbound calls into qualified
-              opportunities.
+              An AI gatekeeper for every inbound sales call.
             </p>
           </div>
 

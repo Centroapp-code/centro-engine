@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Centro | AI Sales Phone Agent",
+  title: "Centro | AI Sales Gatekeeper",
   description:
-    "Centro answers, qualifies, and routes your inbound sales calls with an AI phone agent.",
+    "Centro answers, qualifies, and scores inbound vendor and sales calls on your behalf, so your team only spends time on real opportunities.",
 };
 
 export default function RootLayout({

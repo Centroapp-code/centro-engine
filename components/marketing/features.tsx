@@ -12,15 +12,15 @@ import { Section, SectionHeading } from "@/components/marketing/section";
 const FEATURES = [
   {
     icon: Bot,
-    title: "AI Sales Agent",
+    title: "AI Gatekeeper",
     description:
-      "A natural-sounding AI answers every inbound sales call instantly, day or night.",
+      "A natural-sounding AI answers every inbound sales call instantly, so your team doesn't have to.",
   },
   {
     icon: ClipboardCheck,
-    title: "Lead Qualification",
+    title: "Pitch Qualification",
     description:
-      "Centro asks the right questions to understand needs and identify high-intent buyers.",
+      "Centro asks the right questions to understand what's being sold and why it matters.",
   },
   {
     icon: FileText,
@@ -30,21 +30,21 @@ const FEATURES = [
   },
   {
     icon: TrendingUp,
-    title: "Lead Scoring",
+    title: "Opportunity Scoring",
     description:
-      "Leads are automatically scored so reps know exactly who to call first.",
+      "Every pitch is scored so your team knows exactly which ones are worth a follow-up.",
   },
   {
     icon: Plug,
     title: "CRM Integration",
     description:
-      "Qualified leads flow directly into the CRM your sales team already uses.",
+      "Worthwhile opportunities flow directly into the CRM your team already uses.",
   },
   {
     icon: PhoneForwarded,
-    title: "Human Transfer",
+    title: "Human Escalation",
     description:
-      "When a lead is ready, Centro transfers the call live to your sales team.",
+      "When a call is worth taking, Centro transfers it live to the right person on your team.",
   },
 ];
 
@@ -53,8 +53,8 @@ export function Features() {
     <Section id="features" className="bg-muted/30">
       <SectionHeading
         eyebrow="Features"
-        title="Everything your sales team needs from every call"
-        description="Centro handles the full lifecycle of an inbound sales call, from greeting to handoff."
+        title="Everything you need to screen inbound sales calls"
+        description="Centro handles the full lifecycle of every vendor call, from greeting to decision."
       />
 
       <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

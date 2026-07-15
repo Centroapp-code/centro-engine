@@ -4,28 +4,28 @@ import { Section, SectionHeading } from "@/components/marketing/section";
 const STEPS = [
   {
     icon: Phone,
-    title: "Customer calls your company",
-    description: "The caller dials the number they already know.",
+    title: "A salesperson calls your business",
+    description: "A vendor or rep dials in, hoping to reach a decision-maker.",
   },
   {
     icon: Grid2x2,
-    title: "Customer presses the Sales option",
-    description: "Your existing phone menu routes the call to Centro.",
+    title: "The call reaches Centro",
+    description: "Your existing phone system forwards it to Centro instead of your team.",
   },
   {
     icon: Bot,
     title: "Centro answers",
-    description: "A Centro AI sales agent greets the caller instantly.",
+    description: "A Centro AI gatekeeper greets the caller and finds out who they are.",
   },
   {
     icon: ClipboardCheck,
-    title: "AI qualifies the lead",
-    description: "Centro asks the right questions and scores the opportunity.",
+    title: "Centro qualifies the pitch",
+    description: "Centro asks the right questions and scores whether it's worth your time.",
   },
   {
     icon: Users,
-    title: "Sales team receives the opportunity",
-    description: "A qualified lead, summary, and score land in your dashboard.",
+    title: "Your team reviews the opportunity",
+    description: "A summary, score, and recommendation land in your dashboard.",
   },
 ];
 
@@ -34,8 +34,8 @@ export function HowItWorks() {
     <Section id="how-it-works">
       <SectionHeading
         eyebrow="How it works"
-        title="From inbound call to qualified opportunity"
-        description="Centro slots into the phone menu you already have — no new number, no new hardware."
+        title="From sales call to qualified opportunity"
+        description="Centro slots into the phone system you already have — no new number, no new hardware."
       />
 
       <div className="mx-auto mt-16 flex max-w-md flex-col items-center">
