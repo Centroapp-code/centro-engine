@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ImagePlaceholder } from "@/components/marketing/image-placeholder";
 
 export function Hero() {
   return (
@@ -43,6 +44,12 @@ export function Hero() {
             Login
           </Button>
         </div>
+
+        <ImagePlaceholder
+          label="Product dashboard preview"
+          aspectClassName="aspect-video"
+          className="mt-16 max-w-4xl"
+        />
       </div>
     </section>
   );

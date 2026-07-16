@@ -16,8 +16,6 @@ import { Section, SectionHeading } from "@/components/marketing/section";
 const PLANS = [
   {
     name: "Starter",
-    price: "$199",
-    period: "/month",
     description: "For small teams that want to stop fielding every vendor call themselves.",
     features: [
       "1 AI gatekeeper",
@@ -26,13 +24,12 @@ const PLANS = [
       "Call summaries",
       "Email support",
     ],
-    cta: "Start Free Trial",
+    cta: "Join the Waitlist",
+    ctaHref: "mailto:sales@centroengine.com?subject=Centro%20Waitlist%20-%20Starter",
     highlighted: false,
   },
   {
     name: "Growth",
-    price: "$599",
-    period: "/month",
     description: "For growing teams that need CRM integration and more volume.",
     features: [
       "3 AI gatekeepers",
@@ -42,13 +39,12 @@ const PLANS = [
       "CRM integration",
       "Priority support",
     ],
-    cta: "Start Free Trial",
+    cta: "Join the Waitlist",
+    ctaHref: "mailto:sales@centroengine.com?subject=Centro%20Waitlist%20-%20Growth",
     highlighted: true,
   },
   {
     name: "Enterprise",
-    price: "Custom",
-    period: "",
     description: "For organizations fielding high call volume across teams.",
     features: [
       "Unlimited AI gatekeepers",
@@ -58,6 +54,7 @@ const PLANS = [
       "SLA & dedicated support",
     ],
     cta: "Contact Sales",
+    ctaHref: "mailto:sales@centroengine.com?subject=Centro%20Enterprise%20Sales",
     highlighted: false,
   },
 ];
@@ -68,7 +65,7 @@ export function Pricing() {
       <SectionHeading
         eyebrow="Pricing"
         title="Simple plans that scale with your call volume"
-        description="Every plan includes pitch qualification, scoring, and call summaries out of the box."
+        description="We're finalizing pricing ahead of launch. Join the waitlist to lock in early access and be first to know when plans go live."
       />
 
       <div className="mt-16 grid gap-6 lg:grid-cols-3">
@@ -87,14 +84,9 @@ export function Pricing() {
               </div>
               <CardDescription>{plan.description}</CardDescription>
               <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-3xl font-semibold tracking-tight">
-                  {plan.price}
+                <span className="text-3xl font-semibold tracking-tight text-muted-foreground">
+                  Coming Soon
                 </span>
-                {plan.period ? (
-                  <span className="text-sm text-muted-foreground">
-                    {plan.period}
-                  </span>
-                ) : null}
               </div>
             </CardHeader>
 
@@ -114,7 +106,7 @@ export function Pricing() {
                 className="w-full"
                 variant={plan.highlighted ? "default" : "outline"}
                 nativeButton={false}
-                render={<Link href="/sign-up" />}
+                render={<Link href={plan.ctaHref} />}
               >
                 {plan.cta}
               </Button>

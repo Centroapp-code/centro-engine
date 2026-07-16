@@ -14,7 +14,7 @@ const FOOTER_LINKS = [
     heading: "Company",
     links: [
       { label: "About", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Contact", href: "mailto:sales@centroengine.com" },
     ],
   },
   {
@@ -35,6 +35,15 @@ export function Footer() {
             <Logo />
             <p className="mt-4 text-sm text-muted-foreground">
               An AI gatekeeper for every inbound sales call.
+            </p>
+            <p className="mt-4 text-sm">
+              <span className="text-muted-foreground">Sales: </span>
+              <Link
+                href="mailto:sales@centroengine.com"
+                className="font-medium transition-colors hover:text-primary"
+              >
+                sales@centroengine.com
+              </Link>
             </p>
           </div>
 
