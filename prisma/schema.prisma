@@ -27,7 +27,26 @@ enum PhoneIntegrationStatus {
   INACTIVE
 }
 
-enum LeadStatus {
+enum CallStatus {
+  PENDING
+  ANALYZED
+  ARCHIVED
+}
+
+enum CallCategory {
+  SALES
+  VENDOR
+  PARTNERSHIP
+  OTHER
+}
+
+enum OpportunityPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum OpportunityStatus {
   NEW
   CONTACTED
   QUALIFIED
@@ -57,7 +76,7 @@ model Company {
   aiAgents          AIAgent[]
   phoneIntegrations PhoneIntegration[]
   calls             Call[]
-  leads             Lead[]
+  opportunities     Opportunity[]
 
   @@map("companies")
 }
@@ -103,35 +122,62 @@ model PhoneIntegration {
 }
 
 model Call {
-  id             String   @id @default(cuid())
+  id             String     @id @default(cuid())
   companyId      String
-  providerCallId String?  @unique
+  providerCallId String?    @unique
   callerName     String?
   callerPhone    String
   duration       Int?
   transcript     String?
-  summary        String?
-  createdAt      DateTime @default(now())
+  status         CallStatus @default(PENDING)
+  createdAt      DateTime   @default(now())
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company     Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  analysis    CallAnalysis?
+  opportunity Opportunity?
 
   @@index([companyId])
   @@map("calls")
 }
 
-model Lead {
-  id        String     @id @default(cuid())
-  companyId String
-  name      String?
-  email     String?
-  phone     String?
-  score     Int?
-  status    LeadStatus @default(NEW)
-  notes     String?
-  createdAt DateTime   @default(now())
+/**
+ * The AI's structured read on a Call — one per Call, produced by the future
+ * AI analysis step. Kept separate from Call so the raw call record and the
+ * AI's interpretation of it can evolve independently.
+ */
+model CallAnalysis {
+  id               String       @id @default(cuid())
+  callId           String       @unique
+  category         CallCategory @default(OTHER)
+  summary          String?
+  recommendation   String?
+  opportunityScore Int?
+  extractedInfo    Json         @default("{}")
+  createdAt        DateTime     @default(now())
+
+  call Call @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  @@map("call_analyses")
+}
+
+model Opportunity {
+  id                String              @id @default(cuid())
+  companyId         String
+  callId            String?             @unique
+  name              String?
+  email             String?
+  phone             String?
+  opportunityType   String?
+  score             Int?
+  priority          OpportunityPriority @default(MEDIUM)
+  status            OpportunityStatus   @default(NEW)
+  recommendedAction String?
+  notes             String?
+  createdAt         DateTime            @default(now())
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  call    Call?   @relation(fields: [callId], references: [id], onDelete: Cascade)
 
   @@index([companyId])
-  @@map("leads")
+  @@map("opportunities")
 }
