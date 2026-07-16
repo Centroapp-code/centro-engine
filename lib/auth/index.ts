@@ -5,6 +5,7 @@ import { DEFAULT_ROLE, homeRouteForRole, isRole, type Role } from "./roles";
 export { auth, currentUser };
 export { ROLES, DEFAULT_ROLE, homeRouteForRole, isRole } from "./roles";
 export type { Role } from "./roles";
+export { getCurrentUser, getCurrentCompany, requireCustomerCompany } from "./company";
 
 /** The signed-in user's role, falling back to CUSTOMER if unset. */
 export async function getCurrentRole(): Promise<Role> {

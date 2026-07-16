@@ -2,10 +2,17 @@ import { headers } from "next/headers";
 import { Webhook } from "svix";
 import { clerkClient } from "@clerk/nextjs/server";
 import { DEFAULT_ROLE } from "@/lib/auth/roles";
+import { ensureUserWithCompany } from "@/lib/db/provisioning";
+
+type ClerkUserEventData = {
+  id: string;
+  email_addresses: { id: string; email_address: string }[];
+  primary_email_address_id: string | null;
+};
 
 type ClerkUserCreatedEvent = {
   type: "user.created";
-  data: { id: string };
+  data: ClerkUserEventData;
 };
 
 type ClerkWebhookEvent = ClerkUserCreatedEvent | { type: string; data: { id: string } };
@@ -38,11 +45,21 @@ export async function POST(req: Request) {
     return new Response("Invalid webhook signature", { status: 400 });
   }
 
-  if (event.type === "user.created") {
+  if (event.type === "user.created" && "email_addresses" in event.data) {
+    const { data } = event;
     const client = await clerkClient();
-    await client.users.updateUserMetadata(event.data.id, {
+    await client.users.updateUserMetadata(data.id, {
       publicMetadata: { role: DEFAULT_ROLE },
     });
+
+    const email =
+      data.email_addresses.find(
+        (address) => address.id === data.primary_email_address_id
+      )?.email_address ?? data.email_addresses[0]?.email_address;
+
+    if (email) {
+      await ensureUserWithCompany({ clerkId: data.id, email });
+    }
   }
 
   return new Response("ok", { status: 200 });
