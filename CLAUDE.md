@@ -123,9 +123,12 @@ Hosting:
 [x] User/company SaaS foundation
 [x] Company data isolation
 [x] Dashboard connected to database
+[x] Overview page
 [x] Calls page
 [x] Opportunities page
 [x] Analytics page
+[x] Call → CallAnalysis → Opportunity schema
+[x] Development seed data system
 
 ---
 
