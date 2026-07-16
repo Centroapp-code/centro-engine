@@ -14,6 +14,122 @@ The project has two main parts:
 - **Admin app** — internal tool for Centro staff to manage customers,
   companies, subscriptions, and usage.
 
+  ## Current Project Status (Checkpoint)
+
+Last updated: July 2026
+
+### Completed
+
+✅ Marketing website
+- Landing page completed
+- Product messaging implemented
+- Footer updated with sales contact:
+  - sales@centroengine.com
+- Pricing section converted to "Coming Soon" preview
+- Prepared sections for future branded imagery/assets
+
+✅ Authentication
+- Clerk authentication implemented
+- Sign up / Sign in flows implemented
+- User provisioning connected with Prisma
+- Multi-tenancy handled through Company + CompanyMember models
+
+✅ Database & Backend
+- Neon PostgreSQL connected
+- Prisma ORM configured
+- Prisma singleton pattern implemented
+- Database connection verified successfully
+
+Verified:
+- Prisma → Neon connection works
+- Company records can be queried successfully
+
+✅ Customer Dashboard
+Implemented:
+- Dashboard layout
+- Calls section
+- Opportunities section
+- Analytics section
+- Company-based data structure
+
+### Current Infrastructure
+
+| Service | Status |
+| --- | --- |
+| GitHub | Connected |
+| Vercel | Connected |
+| Neon PostgreSQL | Connected |
+| Prisma | Configured |
+| Clerk | Configured |
+
+### Current Blocker
+
+Production authentication issue:
+
+Website:
+https://centroengine.com
+
+Issue:
+- Local authentication works.
+- Production signup/sign-in returns:
+  `ERROR 225175667`
+
+Investigation completed:
+- Prisma/database are not the issue.
+- Error appears related to Clerk production deployment configuration.
+- Next step is verifying:
+  - Vercel environment variables
+  - Clerk domain configuration
+  - Clerk organization settings
+  - Production deployment behavior
+
+Do not begin AI/Twilio development until production authentication is stable.
+
+---
+
+## Next Development Phases
+
+### Phase 1 — AI Intelligence (Next)
+
+Build:
+
+1. AI Agent Configuration
+   - Company information
+   - Products/services
+   - Agent personality
+   - Qualification questions
+   - Sales instructions
+
+2. AI Conversation Engine
+   - OpenAI integration
+   - Context-aware conversations
+   - Lead qualification logic
+
+3. AI Analytics
+   - Call summaries
+   - Lead scoring
+   - Buying intent analysis
+
+### Phase 2 — Voice Integration
+
+Twilio account needed here.
+
+Build:
+- Phone number provisioning
+- Incoming call routing
+- Speech-to-text
+- AI voice responses
+- Call recordings/transcripts
+
+### Phase 3 — SaaS Features
+
+Future:
+- Billing
+- Subscription management
+- Usage tracking
+- Customer onboarding
+- Enterprise features
+
 ## Tech stack
 
 | Layer | Choice |
