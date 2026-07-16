@@ -1,41 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { DataTable, type DataTableColumn } from "@/components/data-table";
-import { CallDetailsDialog } from "@/components/dashboard/call-details-dialog";
-import { mockCalls, type MockCall } from "@/lib/mock/dashboard";
-import { formatDate, formatDuration } from "@/lib/format";
-
-const columns: DataTableColumn<MockCall>[] = [
-  {
-    header: "Caller",
-    cell: (call) => (
-      <div>
-        <p className="font-medium">{call.callerName ?? "Unknown"}</p>
-        <p className="text-xs text-muted-foreground">{call.callerPhone}</p>
-      </div>
-    ),
-  },
-  {
-    header: "Date",
-    cell: (call) => formatDate(call.date),
-  },
-  {
-    header: "Duration",
-    cell: (call) => formatDuration(call.duration),
-  },
-  {
-    header: "Summary",
-    className: "max-w-xs whitespace-normal",
-    cell: (call) => (
-      <p className="line-clamp-2 text-sm text-muted-foreground">
-        {call.summary}
-      </p>
-    ),
-  },
-  {
-    header: "Transcript",
-    cell: (call) => <CallDetailsDialog call={call} />,
-  },
-];
+import { Suspense } from "react";
+import { CallsContent } from "@/components/dashboard/calls-content";
+import { CallsSkeleton } from "@/components/dashboard/calls-skeleton";
 
 export default function CallsPage() {
   return (
@@ -48,16 +13,9 @@ export default function CallsPage() {
         </p>
       </div>
 
-      <Card>
-        <CardContent>
-          <DataTable
-            columns={columns}
-            rows={mockCalls}
-            getRowKey={(call) => call.id}
-            emptyMessage="No calls yet."
-          />
-        </CardContent>
-      </Card>
+      <Suspense fallback={<CallsSkeleton />}>
+        <CallsContent />
+      </Suspense>
     </div>
   );
 }
