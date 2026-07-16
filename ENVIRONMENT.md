@@ -15,7 +15,7 @@ When deploying, set the same variables in the Vercel project settings
 
 | Variable | Description |
 | --- | --- |
-| `DATABASE_URL` | PostgreSQL connection string used by Prisma. Format: `postgresql://user:password@host:5432/dbname?schema=public`. For local dev, run Postgres locally or use `npx prisma dev`. For production, use a hosted Postgres provider (Vercel Postgres, Neon, Supabase, RDS, etc). |
+| `DATABASE_URL` | PostgreSQL connection string used by Prisma. Centro runs on [Neon](https://neon.tech) — format: `postgresql://user:password@<endpoint>.neon.tech/<db>?sslmode=require`. Neon requires `sslmode=require` on every connection. For serverless deployments (Vercel), prefer Neon's pooled connection string (the endpoint host with a `-pooler` suffix) to avoid exhausting Postgres's connection limit under concurrent function invocations — `prisma migrate deploy` should still be run against the direct (non-pooled) endpoint. |
 | `SHADOW_DATABASE_URL` | Optional. Only used by `prisma migrate dev` to create/reset a throwaway shadow database when generating new migrations locally. Not needed for `prisma migrate deploy` or in production. |
 
 ## Authentication (Clerk)
