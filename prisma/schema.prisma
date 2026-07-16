@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../lib/db/generated"
@@ -10,6 +5,125 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id                 String          @id @default(cuid())
+  clerkId            String          @unique
+  email              String          @unique
+  role               Role            @default(CUSTOMER)
+  createdAt          DateTime        @default(now())
+  companyMemberships CompanyMember[]
+
+  @@map("users")
+}
+
+model Company {
+  id                String             @id @default(cuid())
+  name              String
+  industry          String?
+  createdAt         DateTime           @default(now())
+  aiAgents          AIAgent[]
+  calls             Call[]
+  members           CompanyMember[]
+  opportunities     Opportunity[]
+  phoneIntegrations PhoneIntegration[]
+
+  @@map("companies")
+}
+
+model CompanyMember {
+  userId    String
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, companyId])
+  @@index([companyId])
+  @@map("company_members")
+}
+
+model AIAgent {
+  id                     String  @id @default(cuid())
+  companyId              String
+  name                   String
+  greeting               String
+  instructions           String
+  qualificationQuestions Json    @default("[]")
+  active                 Boolean @default(true)
+  company                Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("ai_agents")
+}
+
+model PhoneIntegration {
+  id          String                 @id @default(cuid())
+  companyId   String
+  phoneNumber String                 @unique
+  provider    PhoneProvider          @default(TWILIO)
+  status      PhoneIntegrationStatus @default(PENDING)
+  company     Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("phone_integrations")
+}
+
+model Call {
+  id             String        @id @default(cuid())
+  companyId      String
+  callerName     String?
+  callerPhone    String
+  duration       Int?
+  transcript     String?
+  createdAt      DateTime      @default(now())
+  providerCallId String?       @unique
+  status         CallStatus    @default(PENDING)
+  analysis       CallAnalysis?
+  company        Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  opportunity    Opportunity?
+
+  @@index([companyId])
+  @@map("calls")
+}
+
+/// *
+///  * The AI's structured read on a Call — one per Call, produced by the future
+///  * AI analysis step. Kept separate from Call so the raw call record and the
+///  * AI's interpretation of it can evolve independently.
+model CallAnalysis {
+  id               String       @id @default(cuid())
+  callId           String       @unique
+  category         CallCategory @default(OTHER)
+  summary          String?
+  recommendation   String?
+  opportunityScore Int?
+  extractedInfo    Json         @default("{}")
+  createdAt        DateTime     @default(now())
+  call             Call         @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  @@map("call_analyses")
+}
+
+model Opportunity {
+  id                String              @id @default(cuid())
+  companyId         String
+  callId            String?             @unique
+  name              String?
+  email             String?
+  phone             String?
+  opportunityType   String?
+  score             Int?
+  priority          OpportunityPriority @default(MEDIUM)
+  status            OpportunityStatus   @default(NEW)
+  recommendedAction String?
+  notes             String?
+  createdAt         DateTime            @default(now())
+  call              Call?               @relation(fields: [callId], references: [id], onDelete: Cascade)
+  company           Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("opportunities")
 }
 
 enum Role {
@@ -52,132 +166,4 @@ enum OpportunityStatus {
   QUALIFIED
   WON
   LOST
-}
-
-model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique
-  email     String   @unique
-  role      Role     @default(CUSTOMER)
-  createdAt DateTime @default(now())
-
-  companyMemberships CompanyMember[]
-
-  @@map("users")
-}
-
-model Company {
-  id        String   @id @default(cuid())
-  name      String
-  industry  String?
-  createdAt DateTime @default(now())
-
-  members           CompanyMember[]
-  aiAgents          AIAgent[]
-  phoneIntegrations PhoneIntegration[]
-  calls             Call[]
-  opportunities     Opportunity[]
-
-  @@map("companies")
-}
-
-model CompanyMember {
-  userId    String
-  companyId String
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@id([userId, companyId])
-  @@index([companyId])
-  @@map("company_members")
-}
-
-model AIAgent {
-  id                     String  @id @default(cuid())
-  companyId              String
-  name                   String
-  greeting               String
-  instructions           String
-  qualificationQuestions Json    @default("[]")
-  active                 Boolean @default(true)
-
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@index([companyId])
-  @@map("ai_agents")
-}
-
-model PhoneIntegration {
-  id          String                 @id @default(cuid())
-  companyId   String
-  phoneNumber String                 @unique
-  provider    PhoneProvider          @default(TWILIO)
-  status      PhoneIntegrationStatus @default(PENDING)
-
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@index([companyId])
-  @@map("phone_integrations")
-}
-
-model Call {
-  id             String     @id @default(cuid())
-  companyId      String
-  providerCallId String?    @unique
-  callerName     String?
-  callerPhone    String
-  duration       Int?
-  transcript     String?
-  status         CallStatus @default(PENDING)
-  createdAt      DateTime   @default(now())
-
-  company     Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  analysis    CallAnalysis?
-  opportunity Opportunity?
-
-  @@index([companyId])
-  @@map("calls")
-}
-
-/**
- * The AI's structured read on a Call — one per Call, produced by the future
- * AI analysis step. Kept separate from Call so the raw call record and the
- * AI's interpretation of it can evolve independently.
- */
-model CallAnalysis {
-  id               String       @id @default(cuid())
-  callId           String       @unique
-  category         CallCategory @default(OTHER)
-  summary          String?
-  recommendation   String?
-  opportunityScore Int?
-  extractedInfo    Json         @default("{}")
-  createdAt        DateTime     @default(now())
-
-  call Call @relation(fields: [callId], references: [id], onDelete: Cascade)
-
-  @@map("call_analyses")
-}
-
-model Opportunity {
-  id                String              @id @default(cuid())
-  companyId         String
-  callId            String?             @unique
-  name              String?
-  email             String?
-  phone             String?
-  opportunityType   String?
-  score             Int?
-  priority          OpportunityPriority @default(MEDIUM)
-  status            OpportunityStatus   @default(NEW)
-  recommendedAction String?
-  notes             String?
-  createdAt         DateTime            @default(now())
-
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  call    Call?   @relation(fields: [callId], references: [id], onDelete: Cascade)
-
-  @@index([companyId])
-  @@map("opportunities")
 }
