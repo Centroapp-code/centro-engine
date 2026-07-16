@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import type { MockOpportunityStatus } from "@/lib/mock/dashboard";
+import type { OpportunityStatus } from "@/lib/db/generated/enums";
 
-const STATUS_LABELS: Record<MockOpportunityStatus, string> = {
+const STATUS_LABELS: Record<OpportunityStatus, string> = {
   NEW: "New",
   CONTACTED: "Contacted",
   QUALIFIED: "Qualified",
@@ -12,7 +12,7 @@ const STATUS_LABELS: Record<MockOpportunityStatus, string> = {
   LOST: "Lost",
 };
 
-const STATUS_COLOR_CLASS: Record<MockOpportunityStatus, string> = {
+const STATUS_COLOR_CLASS: Record<OpportunityStatus, string> = {
   NEW: "fill-[#2a78d6] dark:fill-[#3987e5]",
   CONTACTED: "fill-[#eda100] dark:fill-[#c98500]",
   QUALIFIED: "fill-[#008300] dark:fill-[#008300]",
@@ -23,7 +23,7 @@ const STATUS_COLOR_CLASS: Record<MockOpportunityStatus, string> = {
 export function OpportunitiesStatusChart({
   data,
 }: {
-  data: { status: MockOpportunityStatus; count: number }[];
+  data: { status: OpportunityStatus; count: number }[];
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
   const max = Math.max(...data.map((d) => d.count), 1);

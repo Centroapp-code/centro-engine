@@ -1,31 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { DataTable, type DataTableColumn } from "@/components/data-table";
-import { OpportunityStatusBadge } from "@/components/dashboard/opportunity-status-badge";
-import { mockOpportunities, type MockOpportunity } from "@/lib/mock/dashboard";
-
-const columns: DataTableColumn<MockOpportunity>[] = [
-  {
-    header: "Name",
-    cell: (opportunity) => opportunity.name ?? "Unknown",
-  },
-  {
-    header: "Contact",
-    cell: (opportunity) => (
-      <div>
-        <p>{opportunity.email ?? "—"}</p>
-        <p className="text-xs text-muted-foreground">{opportunity.phone ?? "—"}</p>
-      </div>
-    ),
-  },
-  {
-    header: "Score",
-    cell: (opportunity) => (opportunity.score !== null ? opportunity.score : "—"),
-  },
-  {
-    header: "Status",
-    cell: (opportunity) => <OpportunityStatusBadge status={opportunity.status} />,
-  },
-];
+import { Suspense } from "react";
+import { OpportunitiesContent } from "@/components/dashboard/opportunities-content";
+import { OpportunitiesSkeleton } from "@/components/dashboard/opportunities-skeleton";
 
 export default function OpportunitiesPage() {
   return (
@@ -38,16 +13,9 @@ export default function OpportunitiesPage() {
         </p>
       </div>
 
-      <Card>
-        <CardContent>
-          <DataTable
-            columns={columns}
-            rows={mockOpportunities}
-            getRowKey={(opportunity) => opportunity.id}
-            emptyMessage="No opportunities yet."
-          />
-        </CardContent>
-      </Card>
+      <Suspense fallback={<OpportunitiesSkeleton />}>
+        <OpportunitiesContent />
+      </Suspense>
     </div>
   );
 }

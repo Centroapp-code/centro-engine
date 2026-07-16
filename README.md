@@ -136,13 +136,32 @@ know nothing about Twilio. Swapping providers means writing a new
    with `npx prisma migrate dev --name <description>` instead (requires
    `SHADOW_DATABASE_URL` — see [ENVIRONMENT.md](./ENVIRONMENT.md)).
 
-4. Complete the one-time Clerk Dashboard setup described in
+4. Seed realistic demo data (a demo company, a demo customer user, inbound
+   calls, AI analyses, and opportunities) so the customer dashboard has
+   something to show:
+
+   ```bash
+   npx prisma db seed
+   ```
+
+   Safe to re-run — every row is upserted against a stable id, so seeding
+   again updates the same demo records instead of duplicating them. The
+   script refuses to run when `NODE_ENV=production`, as a safeguard against
+   seeding a live database. See `prisma/seed.ts` for exactly what it creates.
+
+   The seeded demo user has no real Clerk session, so signing in as
+   yourself won't show this data automatically (your own sign-in provisions
+   its own separate company). To view the seeded data in the dashboard,
+   open `npx prisma studio`, find your own `User` row, and add a
+   `CompanyMember` row linking your `userId` to `companyId: "seed-demo-company"`.
+
+5. Complete the one-time Clerk Dashboard setup described in
    [ENVIRONMENT.md](./ENVIRONMENT.md#roles-customer--admin) — a session
    token claim for roles, and a webhook endpoint for the `CLERK_WEBHOOK_SECRET`.
    For local development, use the Clerk CLI or a tunnel (e.g. `ngrok`) so
    Clerk can reach `http://localhost:3000/api/webhooks/clerk`.
 
-5. Run the dev server:
+6. Run the dev server:
 
    ```bash
    npm run dev

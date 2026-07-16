@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import type { MockDailyCallVolume } from "@/lib/mock/dashboard";
+import type { DailyCallVolume } from "@/lib/db/queries/analytics";
 
 const WIDTH = 560;
 const HEIGHT = 220;
@@ -23,7 +23,7 @@ function formatDayLabel(iso: string) {
   });
 }
 
-export function CallsVolumeChart({ data }: { data: MockDailyCallVolume[] }) {
+export function CallsVolumeChart({ data }: { data: DailyCallVolume[] }) {
   const [hovered, setHovered] = useState<number | null>(null);
 
   const max = niceMax(Math.max(...data.map((d) => d.count)));

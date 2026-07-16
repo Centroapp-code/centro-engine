@@ -1,7 +1,7 @@
 import { StatusBadge, type StatusTone } from "@/components/status-badge";
-import type { MockOpportunityStatus } from "@/lib/mock/dashboard";
+import type { OpportunityStatus } from "@/lib/db/generated/enums";
 
-const STATUS_TONES: Record<MockOpportunityStatus, StatusTone> = {
+const STATUS_TONES: Record<OpportunityStatus, StatusTone> = {
   NEW: "info",
   CONTACTED: "warning",
   QUALIFIED: "success",
@@ -9,7 +9,7 @@ const STATUS_TONES: Record<MockOpportunityStatus, StatusTone> = {
   LOST: "neutral",
 };
 
-const STATUS_LABELS: Record<MockOpportunityStatus, string> = {
+const STATUS_LABELS: Record<OpportunityStatus, string> = {
   NEW: "New",
   CONTACTED: "Contacted",
   QUALIFIED: "Qualified",
@@ -17,6 +17,6 @@ const STATUS_LABELS: Record<MockOpportunityStatus, string> = {
   LOST: "Lost",
 };
 
-export function OpportunityStatusBadge({ status }: { status: MockOpportunityStatus }) {
+export function OpportunityStatusBadge({ status }: { status: OpportunityStatus }) {
   return <StatusBadge label={STATUS_LABELS[status]} tone={STATUS_TONES[status]} />;
 }
