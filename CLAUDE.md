@@ -331,3 +331,14 @@ Examples:
 - Use mock data when integrations are not ready.
 - Consider future AI and voice capabilities when designing components and database models.
 - Maintain consistency with the Centro brand and product vision.
+
+## Extensibility
+
+Design all new features to be modular and extensible.
+
+- Keep pages small and focused.
+- Build reusable components.
+- Favor composition over duplication.
+- Avoid tightly coupling business logic to UI components.
+- Make it easy to add dashboard widgets, analytics, pages, integrations, and AI features without major refactoring.
+- Consider future scalability before introducing new models or services, but do not over-engineer.
