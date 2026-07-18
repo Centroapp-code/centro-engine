@@ -15,52 +15,6 @@ export const mockOverviewStats: MockOverviewStats = {
   avgOpportunityScore: 62,
 };
 
-export type MockCompanyProfile = {
-  name: string;
-  industry: string;
-};
-
-export const mockCompanyProfile: MockCompanyProfile = {
-  name: "Acme Inc",
-  industry: "Logistics",
-};
-
-export type MockPhoneNumberInfo = {
-  phoneNumber: string;
-  provider: string;
-  status: "ACTIVE" | "PENDING" | "INACTIVE";
-};
-
-export const mockPhoneNumber: MockPhoneNumberInfo = {
-  phoneNumber: "+1 (555) 201-9000",
-  provider: "Twilio",
-  status: "ACTIVE",
-};
-
-export type MockAgentConfig = {
-  name: string;
-  greeting: string;
-  companyDescription: string;
-  productsServices: string;
-  qualificationQuestions: string[];
-};
-
-export const mockAgentConfig: MockAgentConfig = {
-  name: "Centro Agent",
-  greeting:
-    "Thanks for calling! I'm Centro, an AI assistant screening sales calls for this team. Who am I speaking with, and what are you calling about?",
-  companyDescription:
-    "Acme Inc. builds workflow automation software for mid-market logistics companies.",
-  productsServices:
-    "We're not looking to buy freight brokerage, fuel cards, or generic SaaS point solutions right now — the team already owns Route Optimizer, Fleet Dashboard, and Dispatch Copilot.",
-  qualificationQuestions: [
-    "What are you offering, in one sentence?",
-    "Which team or person is this relevant to?",
-    "Is this a cold outreach or a referral?",
-    "What's the price range or budget expectation?",
-  ],
-};
-
 export type MockCall = {
   id: string;
   callerName: string | null;

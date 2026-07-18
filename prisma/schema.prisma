@@ -49,6 +49,8 @@ model AIAgent {
   name                   String
   greeting               String
   instructions           String
+  personality            String?
+  transferRules          String?
   qualificationQuestions Json    @default("[]")
   active                 Boolean @default(true)
   company                Company @relation(fields: [companyId], references: [id], onDelete: Cascade)

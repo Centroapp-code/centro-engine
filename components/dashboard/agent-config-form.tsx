@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,19 +15,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { MockAgentConfig } from "@/lib/mock/dashboard";
+import type { AgentConfig } from "@/lib/db/queries/settings";
+import { updateAgentConfig, type AgentConfigActionState } from "@/lib/actions/settings";
 
-export function AgentConfigForm({ initial }: { initial: MockAgentConfig }) {
-  const [name, setName] = useState(initial.name);
-  const [greeting, setGreeting] = useState(initial.greeting);
-  const [companyDescription, setCompanyDescription] = useState(
-    initial.companyDescription
+const INITIAL_STATE: AgentConfigActionState = { status: "idle" };
+
+function SaveButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending ? "Saving..." : "Save changes"}
+    </Button>
   );
-  const [productsServices, setProductsServices] = useState(
-    initial.productsServices
-  );
+}
+
+export function AgentConfigForm({ initial }: { initial: AgentConfig }) {
   const [questions, setQuestions] = useState(initial.qualificationQuestions);
-  const [saved, setSaved] = useState(false);
+  const [state, formAction] = useActionState(updateAgentConfig, INITIAL_STATE);
 
   function updateQuestion(index: number, value: string) {
     setQuestions((prev) => prev.map((q, i) => (i === index ? value : q)));
@@ -40,13 +45,8 @@ export function AgentConfigForm({ initial }: { initial: MockAgentConfig }) {
     setQuestions((prev) => [...prev, ""]);
   }
 
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    setSaved(true);
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <form action={formAction} className="flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Agent identity</CardTitle>
@@ -57,19 +57,26 @@ export function AgentConfigForm({ initial }: { initial: MockAgentConfig }) {
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="agent-name">Agent name</Label>
-            <Input
-              id="agent-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <Input id="agent-name" name="name" defaultValue={initial.name} required />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="agent-greeting">Greeting</Label>
             <Textarea
               id="agent-greeting"
+              name="greeting"
               rows={3}
-              value={greeting}
-              onChange={(e) => setGreeting(e.target.value)}
+              defaultValue={initial.greeting}
+              required
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="agent-personality">Personality / tone</Label>
+            <Textarea
+              id="agent-personality"
+              name="personality"
+              rows={2}
+              defaultValue={initial.personality}
+              placeholder="e.g. Warm and professional, but brief — gets to the point quickly."
             />
           </div>
         </CardContent>
@@ -77,28 +84,31 @@ export function AgentConfigForm({ initial }: { initial: MockAgentConfig }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Business context</CardTitle>
+          <CardTitle>Sales instructions</CardTitle>
           <CardDescription>
-            What the agent tells callers about your company and offering.
+            What the agent tells callers about your company and how it should
+            handle the conversation.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="company-description">Company description</Label>
+            <Label htmlFor="agent-instructions">Instructions</Label>
             <Textarea
-              id="company-description"
-              rows={3}
-              value={companyDescription}
-              onChange={(e) => setCompanyDescription(e.target.value)}
+              id="agent-instructions"
+              name="instructions"
+              rows={4}
+              defaultValue={initial.instructions}
+              placeholder="Describe your company, products/services, and what the agent should or shouldn't engage with."
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="products-services">Products / services</Label>
+            <Label htmlFor="agent-transfer-rules">Transfer rules</Label>
             <Textarea
-              id="products-services"
+              id="agent-transfer-rules"
+              name="transferRules"
               rows={3}
-              value={productsServices}
-              onChange={(e) => setProductsServices(e.target.value)}
+              defaultValue={initial.transferRules}
+              placeholder="e.g. Transfer live if the caller is a warm referral or the deal is over $10k."
             />
           </div>
         </CardContent>
@@ -115,6 +125,7 @@ export function AgentConfigForm({ initial }: { initial: MockAgentConfig }) {
           {questions.map((question, index) => (
             <div key={index} className="flex items-center gap-2">
               <Input
+                name="qualificationQuestions"
                 value={question}
                 onChange={(e) => updateQuestion(index, e.target.value)}
                 placeholder={`Question ${index + 1}`}
@@ -141,10 +152,16 @@ export function AgentConfigForm({ initial }: { initial: MockAgentConfig }) {
           </Button>
         </CardContent>
         <CardFooter className="justify-between">
-          <p className="text-sm text-muted-foreground">
-            {saved ? "Changes saved." : ""}
+          <p
+            className={
+              state.status === "error"
+                ? "text-sm text-destructive"
+                : "text-sm text-muted-foreground"
+            }
+          >
+            {state.message ?? ""}
           </p>
-          <Button type="submit">Save changes</Button>
+          <SaveButton />
         </CardFooter>
       </Card>
     </form>
