@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,7 +49,7 @@ function canContinue(step: number, data: OnboardingData): boolean {
 
 export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: string }) {
   const router = useRouter();
-  const { getToken } = useAuth();
+  const { user } = useUser();
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -84,9 +84,11 @@ export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: s
         setError(result.message ?? "Something went wrong. Please try again.");
         return;
       }
-      // Force a fresh session token so proxy.ts sees the updated
-      // onboardingCompleted claim before landing on /dashboard.
-      await getToken({ skipCache: true });
+      // Clerk's documented pattern for this exact case: reloading the user
+      // forces an immediate session token refresh, so proxy.ts sees the
+      // updated onboardingCompleted claim on the very next request instead
+      // of waiting for the ~60s automatic refresh cycle.
+      await user?.reload();
       router.push("/dashboard");
     });
   }

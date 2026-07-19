@@ -90,13 +90,22 @@ export async function completeOnboarding(
         data: { onboardingCompleted: true },
       });
     });
+  } catch (error) {
+    console.error("[onboarding] Failed to save company/agent/user data:", error);
+    return { status: "error", message: "Failed to save your setup. Please try again." };
+  }
 
+  // The database write above is the source of truth and already committed.
+  // A failure here only delays the Clerk session claim catching up (it will
+  // on the next natural token refresh) — it must not be reported to the
+  // user as a failed save when their data was, in fact, saved.
+  try {
     const client = await clerkClient();
     await client.users.updateUserMetadata(userId, {
       publicMetadata: { onboardingCompleted: true },
     });
-  } catch {
-    return { status: "error", message: "Failed to save your setup. Please try again." };
+  } catch (error) {
+    console.error("[onboarding] Saved to database but failed to sync Clerk metadata:", error);
   }
 
   revalidatePath("/dashboard");

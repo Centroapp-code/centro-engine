@@ -17,11 +17,28 @@ const userWithCompanies = {
   include: { companyMemberships: { include: { company: true } } },
 } as const;
 
+function violatedField(error: Prisma.PrismaClientKnownRequestError): string | undefined {
+  const target = error.meta?.target;
+  if (Array.isArray(target)) return target[0] as string | undefined;
+  return typeof target === "string" ? target : undefined;
+}
+
 /**
- * Upserts the User row by clerkId. Two truly concurrent first-time calls
- * for the same brand-new clerkId (e.g. the Clerk webhook and the first
- * dashboard visit) can both attempt the create branch; the loser re-reads
- * the winner's row instead of surfacing a spurious unique-constraint error.
+ * Upserts the User row by clerkId. `User` has two unique constraints —
+ * clerkId and email — so a P2002 here has two distinct causes, and treating
+ * both as the same case is wrong:
+ *
+ * 1. clerkId conflict: two truly concurrent first-time calls for the same
+ *    brand-new clerkId (e.g. the Clerk webhook and the first dashboard
+ *    visit) both attempted the create branch. The loser re-reads the
+ *    winner's row.
+ * 2. email conflict: a row with this email already exists under a
+ *    *different* clerkId — e.g. left over from a deleted Clerk user, or
+ *    from switching Clerk instances (dev -> production) without fully
+ *    cleaning up the old row. Re-fetching by the new clerkId in this case
+ *    would find nothing and throw. Instead, re-point the existing row at
+ *    the current Clerk identity so the user keeps their existing
+ *    Company/CompanyMember instead of crashing.
  */
 async function upsertUser({ clerkId, email }: ClerkIdentity) {
   try {
@@ -33,7 +50,15 @@ async function upsertUser({ clerkId, email }: ClerkIdentity) {
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return prisma.user.findUniqueOrThrow({ where: { clerkId }, ...userWithCompanies });
+      if (violatedField(error) === "clerkId") {
+        return prisma.user.findUniqueOrThrow({ where: { clerkId }, ...userWithCompanies });
+      }
+
+      return prisma.user.update({
+        where: { email },
+        data: { clerkId },
+        ...userWithCompanies,
+      });
     }
     throw error;
   }
