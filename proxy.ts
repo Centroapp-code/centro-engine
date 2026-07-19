@@ -2,9 +2,14 @@ import { NextResponse } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { DEFAULT_ROLE, isRole } from "@/lib/auth/roles";
 
+const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
 const isDashboardRoute = createRouteMatcher(["/dashboard(.*)"]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/admin(.*)"]);
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/admin(.*)",
+  "/onboarding(.*)",
+]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (!isProtectedRoute(req)) {
@@ -24,8 +29,22 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  if (isDashboardRoute(req) && role === "ADMIN") {
-    return NextResponse.redirect(new URL("/admin", req.url));
+  if (role === "ADMIN") {
+    if (isDashboardRoute(req) || isOnboardingRoute(req)) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
+    return;
+  }
+
+  // CUSTOMER role: gate the dashboard on onboarding completion.
+  const onboardingCompleted = sessionClaims?.metadata?.onboardingCompleted === true;
+
+  if (isDashboardRoute(req) && !onboardingCompleted) {
+    return NextResponse.redirect(new URL("/onboarding", req.url));
+  }
+
+  if (isOnboardingRoute(req) && onboardingCompleted) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 });
 

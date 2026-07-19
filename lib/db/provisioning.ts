@@ -7,7 +7,7 @@ type ClerkIdentity = {
   email: string;
 };
 
-function defaultCompanyName(email: string): string {
+export function defaultCompanyName(email: string): string {
   const domain = email.split("@")[1] ?? "";
   const label = domain.split(".")[0];
   return label ? `${label[0].toUpperCase()}${label.slice(1)}` : "My Company";

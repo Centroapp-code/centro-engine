@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id                 String          @id @default(cuid())
-  clerkId            String          @unique
-  email              String          @unique
-  role               Role            @default(CUSTOMER)
-  createdAt          DateTime        @default(now())
-  companyMemberships CompanyMember[]
+  id                  String          @id @default(cuid())
+  clerkId             String          @unique
+  email               String          @unique
+  role                Role            @default(CUSTOMER)
+  onboardingCompleted Boolean         @default(false)
+  createdAt           DateTime        @default(now())
+  companyMemberships  CompanyMember[]
 
   @@map("users")
 }
@@ -22,6 +23,12 @@ model Company {
   id                String             @id @default(cuid())
   name              String
   industry          String?
+  companySize       String?
+  salesTeamSize     String?
+  primaryGoal       String?
+  priorities        Json?
+  targetCustomer    String?
+  notes             String?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   aiAgents          AIAgent[]
