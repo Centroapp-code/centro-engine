@@ -46,16 +46,11 @@ export async function updateAgentConfig(
   };
 
   try {
-    const existing = await prisma.aIAgent.findFirst({
+    await prisma.aIAgent.upsert({
       where: { companyId: company.id },
-      orderBy: { id: "asc" },
+      update: data,
+      create: { ...data, companyId: company.id },
     });
-
-    if (existing) {
-      await prisma.aIAgent.update({ where: { id: existing.id }, data });
-    } else {
-      await prisma.aIAgent.create({ data: { ...data, companyId: company.id } });
-    }
   } catch {
     return { status: "error", message: "Failed to save changes. Please try again." };
   }

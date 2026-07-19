@@ -23,6 +23,7 @@ model Company {
   name              String
   industry          String?
   createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   aiAgents          AIAgent[]
   calls             Call[]
   members           CompanyMember[]
@@ -51,11 +52,12 @@ model AIAgent {
   instructions           String
   personality            String?
   transferRules          String?
-  qualificationQuestions Json    @default("[]")
-  active                 Boolean @default(true)
-  company                Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  qualificationQuestions Json     @default("[]")
+  active                 Boolean  @default(true)
+  updatedAt              DateTime @updatedAt
+  company                Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  @@index([companyId])
+  @@unique([companyId])
   @@map("ai_agents")
 }
 
@@ -121,6 +123,7 @@ model Opportunity {
   recommendedAction String?
   notes             String?
   createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
   call              Call?               @relation(fields: [callId], references: [id], onDelete: Cascade)
   company           Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
 

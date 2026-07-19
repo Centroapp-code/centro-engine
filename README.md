@@ -71,17 +71,27 @@ https://centroengine.com
 
 Issue:
 - Local authentication works.
-- Production signup/sign-in returns:
-  `ERROR 225175667`
+- Production signup/sign-in returns: `ERROR 225175667`
 
-Investigation completed:
-- Prisma/database are not the issue.
-- Error appears related to Clerk production deployment configuration.
-- Next step is verifying:
-  - Vercel environment variables
-  - Clerk domain configuration
-  - Clerk organization settings
-  - Production deployment behavior
+Root cause (confirmed): `centroengine.com` is running Clerk **Development**
+keys (`pk_test_.../sk_test_...`). Confirmed directly against the live site —
+both `/` and `/sign-in` return `x-clerk-auth-reason: dev-browser-missing` on
+every fresh request. Development instances only work natively on
+`localhost`; on a real custom domain the required "dev browser" handshake
+isn't supported for production traffic and fails, which is what surfaces as
+this error. `CLERK_WEBHOOK_SECRET` is also unset, which independently breaks
+the `user.created` webhook (fails closed with a 500, so nothing insecure
+happens — the app just falls back to lazily provisioning on first dashboard
+visit instead).
+
+Fix required (Clerk Dashboard + Vercel config only, no code changes) — see
+[ENVIRONMENT.md § Production instance setup](./ENVIRONMENT.md#production-instance-setup-required-before-a-live-custom-domain-works)
+for the exact steps:
+1. Create a Clerk **Production** instance and verify `centroengine.com`.
+2. Set the new `pk_live_`/`sk_live_` pair in Vercel, scoped to Production.
+3. Create a **production** webhook endpoint and set its own
+   `CLERK_WEBHOOK_SECRET`, scoped to Production.
+4. Redeploy.
 
 Do not begin AI/Twilio development until production authentication is stable.
 
@@ -317,8 +327,14 @@ When you're ready to deploy:
    (`npm install`) commands work as-is.
 3. Before the first deploy, add every variable listed in
    [ENVIRONMENT.md](./ENVIRONMENT.md) under Project → Settings →
-   Environment Variables, using production credentials (production Clerk
-   keys, a production Postgres `DATABASE_URL`, live OpenAI/Twilio keys).
+   Environment Variables, using production credentials (a production
+   Postgres `DATABASE_URL`, live OpenAI/Twilio keys, and — critically — a
+   Clerk **Production** instance's `pk_live_`/`sk_live_` keys, not the
+   `pk_test_`/`sk_test_` pair used for local development. A custom domain
+   cannot authenticate against a Development instance; see
+   [ENVIRONMENT.md § Production instance setup](./ENVIRONMENT.md#production-instance-setup-required-before-a-live-custom-domain-works)
+   for the full walkthrough, including the separate production webhook and
+   `CLERK_WEBHOOK_SECRET`).
 4. `npm install` runs `postinstall` → `prisma generate` automatically on
    Vercel, so the generated Prisma client is always in sync with
    `prisma/schema.prisma` — no manual step needed.

@@ -34,6 +34,42 @@ Clerk provides separate key pairs for development and production instances —
 use the matching pair for each Vercel environment, and create a separate
 webhook endpoint (with its own signing secret) per environment.
 
+### Production instance setup (required before a live custom domain works)
+
+A Clerk **Development** instance (`pk_test_...`/`sk_test_...`) only works
+natively on `localhost`. On any other domain it falls back to a "dev browser"
+simulated-session handshake, which is not supported for real traffic and
+fails outright on a custom domain — this is the cause behind a
+`dev-browser-missing` auth failure on a deployed site. A live custom domain
+**requires** a Clerk **Production** instance, which is a separate, one-time
+setup step Clerk does not create automatically:
+
+1. **Clerk Dashboard** → your application → create a **Production**
+   instance (Clerk gates this behind domain verification, separate from the
+   Development instance you've been using).
+2. **Verify domain ownership** for your production domain by adding the
+   DNS TXT/CNAME records Clerk provides, in your DNS provider.
+3. Once verified, Clerk issues a new **`pk_live_...` / `sk_live_...`** key
+   pair tied to that production instance — this is distinct from, and
+   never interchangeable with, your `pk_test_`/`sk_test_` pair.
+4. In **Vercel** → Project Settings → Environment Variables, set
+   `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` to the new
+   `pk_live_`/`sk_live_` values, **scoped to the Production environment
+   only**. Leave `pk_test_`/`sk_test_` set for Preview/Development so local
+   work is unaffected.
+5. The production instance has its **own webhook** and its **own signing
+   secret** — it does not share one with the development instance. Create a
+   new endpoint (Dashboard → Webhooks, on the production instance) pointed
+   at `https://<your-production-domain>/api/webhooks/clerk`, subscribed to
+   `user.created`, and set its signing secret as `CLERK_WEBHOOK_SECRET`
+   scoped to the Production environment in Vercel.
+6. **Redeploy** — Vercel does not hot-swap environment variables into an
+   already-built deployment; trigger a new deployment so the live instance
+   picks up the new keys.
+7. Repeat the [session token claim](#roles-customer--admin) step on the
+   *production* instance too — session token customization is
+   per-instance, not shared with development.
+
 ### Roles (CUSTOMER / ADMIN)
 
 Centro stores each user's role in Clerk's `publicMetadata.role`. Two
