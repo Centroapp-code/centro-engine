@@ -2,22 +2,43 @@
 
 ## Product
 
-Centro is an AI-powered sales gatekeeper and business call intelligence SaaS.
+Centro is an AI-powered vendor call intelligence and business insights SaaS.
 
-Centro connects to existing company phone systems and handles inbound business calls.
+Centro helps companies handle the large volume of unsolicited sales and vendor calls they receive every day.
 
-Example:
+Companies receive calls from:
 
-"Press 4 for Sales"
+- Vendors
+- Service providers
+- Suppliers
+- Software companies
+- Logistics providers
+- Consultants
+- Partners
 
-Centro answers, qualifies the caller, analyzes the conversation, and provides structured intelligence to the company.
+Many of these calls are interruptions, but some contain valuable business opportunities.
 
-Centro transforms inbound calls into:
+Centro acts as an AI receptionist and intelligence layer.
+
+Centro answers vendor and sales calls, gathers relevant information, analyzes conversations, and identifies which opportunities deserve attention.
+
+Centro transforms business calls into:
 
 - Call summaries
+- Vendor intelligence
 - Opportunity scores
-- Business insights
-- Recommended actions
+- Cost-saving opportunities
+- Business recommendations
+- Follow-up priorities
+
+Centro is not primarily a sales representative.
+
+The AI's role is:
+
+- Professional receptionist
+- Information collector
+- Business analyst
+- Opportunity evaluator
 
 ---
 
@@ -41,6 +62,8 @@ Features:
 - Analytics
 - Settings
 
+The dashboard should evolve into a business intelligence center where companies review and prioritize vendor conversations.
+
 ## Admin Dashboard
 
 Internal Centro management.
@@ -56,27 +79,43 @@ Future:
 
 # Core Workflow
 
-Inbound Call
+Vendor/Sales Call
 
 ↓
 
-Twilio Phone System
+Company Phone System
 
 ↓
 
-Centro AI Agent
+Twilio
 
 ↓
 
-Transcript
+Centro AI Receptionist
 
 ↓
 
-AI Analysis
+Conversation Transcript
 
 ↓
 
-Opportunity Score
+AI Analysis Engine
+
+↓
+
+Information Extraction:
+
+- Vendor/company information
+- Product or service offered
+- Industry/category
+- Pricing information
+- Claimed benefits
+- Business impact
+- Relevant details
+
+↓
+
+Opportunity Scoring
 
 ↓
 
@@ -108,6 +147,9 @@ Voice:
 
 Hosting:
 - Vercel
+
+AI:
+- OpenAI (planned)
 
 ---
 
@@ -142,23 +184,40 @@ The application currently supports:
 - Customer companies
 - Database-backed dashboards
 - Company-scoped data
+- Foundation for AI call intelligence
 
-The next focus is AI intelligence.
+The next focus is building the AI intelligence layer.
+
+Centro must understand business conversations and convert them into actionable insights.
+
+The AI should not act as a salesperson.
+
+The AI should act as:
+
+- Professional receptionist
+- Information collector
+- Business analyst
+- Opportunity evaluator
 
 ---
 
 # Next Development Phase
 
-## AI Intelligence Layer
+## AI Phone Intelligence Platform
 
 Build:
 
-- OpenAI integration
+- Twilio phone integration
+- AI receptionist conversations
+- Speech capture
 - Call transcription
-- Call summaries
+- Vendor/company extraction
+- Industry classification
 - Information extraction
+- AI summaries
+- Business impact analysis
 - Opportunity scoring
-- AI recommendations
+- Dashboard intelligence
 
 ---
 
@@ -170,20 +229,140 @@ Build:
 - Speech capture
 - AI responses
 - Live transfers
+- Custom conversation workflows
+
+## Intelligence Layer
+
+- Industry-specific analysis
+- Vendor comparisons
+- Existing provider comparisons
+- Cost-saving recommendations
+- Business impact scoring
+- Market insights
 
 ## Integrations
 
-- Salesforce
-- HubSpot
+Future integrations:
+
+- CRM systems
+- ERP systems
+- Procurement systems
+- Vendor management platforms
 - Slack
 - Email notifications
 
 ## Advanced Features
 
-- Custom qualification workflows
-- AI agent configuration
-- Analytics improvements
+- Custom AI agent configuration
 - Multiple phone numbers
+- Advanced analytics
+- Usage tracking
+- Billing
+- Enterprise features
+
+---
+
+# Industry Flexibility
+
+Centro must support multiple industries.
+
+The platform should not be designed around one specific industry.
+
+Examples:
+
+## Manufacturing
+
+Potential calls:
+
+- Freight providers
+- Material suppliers
+- Equipment vendors
+- Software providers
+
+Potential insights:
+
+- Cost savings
+- Capacity improvements
+- Better supplier options
+- Operational improvements
+
+
+## Healthcare
+
+Potential calls:
+
+- Medical suppliers
+- Service providers
+- Technology vendors
+
+Potential insights:
+
+- Cost comparisons
+- Vendor evaluation
+- Operational improvements
+
+
+## Construction
+
+Potential calls:
+
+- Equipment providers
+- Contractors
+- Material suppliers
+
+Potential insights:
+
+- Pricing opportunities
+- Availability
+- Vendor recommendations
+
+
+## Technology Companies
+
+Potential calls:
+
+- Software vendors
+- Consulting companies
+- Service providers
+
+Potential insights:
+
+- Tool comparisons
+- Cost optimization
+- Feature evaluation
+
+Industry-specific intelligence should be configurable.
+
+Avoid hardcoding business logic around one industry.
+
+The core system should focus on:
+
+- Understanding conversations
+- Extracting structured information
+- Evaluating opportunities
+- Providing recommendations
+
+---
+
+# Database Design Principles
+
+Centro should maintain a flexible, scalable data model.
+
+Avoid designing around a single industry.
+
+Prefer general concepts such as:
+
+- Company
+- Industry
+- Call
+- Vendor
+- Vendor Category
+- Call Analysis
+- Opportunity
+- Existing Provider
+- Recommendation
+
+Industry-specific intelligence should be implemented through configurable logic rather than separate hardcoded systems.
 
 ---
 
@@ -191,6 +370,7 @@ Build:
 
 - Keep MVP simple.
 - Build incrementally.
+- Use production-quality implementations.
 - Avoid unnecessary dependencies.
 - Use reusable components.
 - Keep database models scalable.
@@ -200,7 +380,23 @@ Build:
 - Test locally before pushing.
 - Do not refactor unrelated code.
 - Before major changes, inspect existing implementation.
+- Before architectural changes, explain the approach, risks, and alternatives.
 - Update documentation after major milestones.
+
+---
+
+# Feature Development Process
+
+Before implementing major features:
+
+1. Explain the proposed architecture.
+2. Explain why it fits the existing system.
+3. Identify security considerations.
+4. Identify scalability considerations.
+5. Identify possible risks and tradeoffs.
+6. Wait for approval before making major architectural decisions.
+
+Do not make assumptions that create technical debt.
 
 ---
 
@@ -214,5 +410,8 @@ Future features should be added through:
 - Reusable services
 - Clear database relationships
 - Maintainable architecture
+- Configurable industry logic
 
 Avoid building one-off solutions.
+
+Build Centro as a platform that can support thousands of companies across different industries.
