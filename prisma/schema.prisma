@@ -24,10 +24,6 @@ model Company {
   name              String
   industry          String?
   companySize       String?
-  salesTeamSize     String?
-  primaryGoal       String?
-  priorities        Json?
-  targetCustomer    String?
   notes             String?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
@@ -36,8 +32,28 @@ model Company {
   members           CompanyMember[]
   opportunities     Opportunity[]
   phoneIntegrations PhoneIntegration[]
+  industryProfile   IndustryProfile?
 
   @@map("companies")
+}
+
+/// *
+///  * Per-company configuration for industry-specific context: which vendor
+///  * categories are relevant, how to weight opportunity scoring, and any
+///  * terminology overrides. Keeps industry logic in data, not hardcoded in
+///  * application code.
+model IndustryProfile {
+  id                String   @id @default(cuid())
+  companyId         String   @unique
+  industry          String
+  vendorCategories  Json     @default("[]")
+  scoringPriorities Json     @default("[]")
+  terminology       Json     @default("{}")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  company           Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("industry_profiles")
 }
 
 model CompanyMember {
@@ -52,17 +68,17 @@ model CompanyMember {
 }
 
 model AIAgent {
-  id                     String  @id @default(cuid())
-  companyId              String
-  name                   String
-  greeting               String
-  instructions           String
-  personality            String?
-  transferRules          String?
-  qualificationQuestions Json     @default("[]")
-  active                 Boolean  @default(true)
-  updatedAt              DateTime @updatedAt
-  company                Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  id                 String   @id @default(cuid())
+  companyId          String
+  name               String
+  greeting           String
+  instructions       String
+  personality        String?
+  transferRules      String?
+  screeningQuestions Json     @default("[]")
+  active             Boolean  @default(true)
+  updatedAt          DateTime @updatedAt
+  company            Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@unique([companyId])
   @@map("ai_agents")
@@ -174,8 +190,7 @@ enum OpportunityPriority {
 
 enum OpportunityStatus {
   NEW
-  CONTACTED
-  QUALIFIED
-  WON
-  LOST
+  REVIEWED
+  FLAGGED
+  DISMISSED
 }
