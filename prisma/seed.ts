@@ -17,7 +17,8 @@
  * Prisma Studio (`npx prisma studio`): find your `User` row, then add a
  * `CompanyMember` row with your `userId` and `companyId: "seed-demo-company"`.
  */
-import { prisma } from "../lib/db/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../lib/db/generated/client";
 import type {
   CallCategory,
   CallStatus,
@@ -30,6 +31,22 @@ if (process.env.NODE_ENV === "production") {
     "Refusing to run prisma/seed.ts with NODE_ENV=production. This seed is for local/dev/demo databases only."
   );
 }
+
+// Constructs its own Prisma client from process.env.DATABASE_URL directly,
+// rather than importing lib/db/client.ts (which pulls in lib/env.ts's
+// `server-only` guard). That guard exists to keep secrets out of client
+// bundles — a concern that doesn't apply to this standalone script, run via
+// bare `tsx` outside of Next.js's bundler. Routing through it here would
+// only add an unrelated failure mode, not real protection.
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    "Missing required environment variable DATABASE_URL. Set it in .env before running the seed script."
+  );
+}
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+});
 
 const DEMO_COMPANY_ID = "seed-demo-company";
 const DEMO_USER_CLERK_ID = "seed-demo-customer";
@@ -91,7 +108,7 @@ const SEED_CALLS: SeedCall[] = [
       opportunityType: "Vendor Pitch",
       score: 41,
       priority: "LOW",
-      status: "CONTACTED",
+      status: "REVIEWED",
       recommendedAction:
         "Low priority — overlaps with existing fleet dashboard tooling unless a clear gap emerges.",
     },
@@ -147,7 +164,7 @@ const SEED_CALLS: SeedCall[] = [
       opportunityType: "Partnership Referral",
       score: 94,
       priority: "HIGH",
-      status: "QUALIFIED",
+      status: "FLAGGED",
       recommendedAction: "Warm referral from the VP of Ops — schedule a live follow-up this week.",
     },
   },
@@ -183,41 +200,42 @@ const SEED_CALLS: SeedCall[] = [
       score: 76,
       priority: "MEDIUM",
       status: "NEW",
-      recommendedAction: "Promising fit for marketing — needs a qualification call before prioritizing.",
+      recommendedAction: "Promising fit — needs a follow-up conversation before prioritizing.",
     },
   },
   {
     providerCallId: "seed-call-6",
-    callerName: "Sam Okafor",
+    callerName: "Renee Castillo",
     callerPhone: "+15551186620",
-    duration: 305,
+    duration: 247,
     status: "ANALYZED",
     transcript:
-      "Agent: Thanks for calling Demo Company, this is Centro. Who am I speaking with and what are you calling about?\nCaller: Hi, I'm already a customer — I want to talk about expanding to a second warehouse location.\nAgent: Great, I'll flag this as an existing customer expansion request for the account team.",
+      "Agent: Thanks for calling Demo Company, this is Centro screening sales calls for the team. Who am I speaking with and what are you calling about?\nCaller: Hi, I'm an insurance broker — we specialize in rebrokering workers' comp coverage for companies with strong safety records.\nAgent: Got it. Is this a cold outreach or is someone here expecting your call?\nCaller: Cold outreach, but I pulled some public safety data on your business and think we could beat your current rate.\nAgent: Understood. What kind of savings are you estimating?\nCaller: Roughly 15% off the current premium, but I'd need your renewal date to confirm.\nAgent: I'll pass this along — someone may follow up before the policy renews.",
     analysis: {
-      category: "SALES",
-      summary: "Existing customer requesting an account expansion to a second warehouse location.",
-      recommendation: "Existing customer expansion — route directly to the account team.",
-      opportunityScore: 88,
+      category: "VENDOR",
+      summary:
+        "Insurance broker offering to rebroker workers' comp coverage, cold outreach, claims ~15% premium reduction based on public safety record data.",
+      recommendation: "Worth a quote comparison before the current policy renews if the claimed savings hold up.",
+      opportunityScore: 68,
       extractedInfo: {
-        callerCompany: "Okafor Freight",
-        industry: "Logistics",
-        productService: "Account expansion to a second warehouse location",
-        reasonForContacting: "Existing customer expansion",
+        callerCompany: "Castillo Risk Partners",
+        industry: "Insurance Brokerage",
+        productService: "Workers' compensation insurance rebrokering",
+        reasonForContacting: "Cold outreach, premium reduction pitch",
         companySize: null,
-        existingCustomersOrUseCases: "Existing customer, single warehouse today",
+        existingCustomersOrUseCases: null,
         decisionMakerRequested: null,
-        timeline: null,
-        businessNeeds: "Support for a second warehouse location",
+        timeline: "Needs current policy renewal date to confirm quote",
+        businessNeeds: "Potential cost savings on workers' comp premium",
       },
     },
     opportunity: {
-      email: "sam.okafor@example.com",
-      opportunityType: "Account Expansion",
-      score: 88,
-      priority: "HIGH",
-      status: "WON",
-      recommendedAction: "Closed — expansion deal signed with the account team.",
+      email: "renee.castillo@castillorisk.example.com",
+      opportunityType: "Vendor Pitch",
+      score: 68,
+      priority: "MEDIUM",
+      status: "FLAGGED",
+      recommendedAction: "Worth a quote comparison before the current policy renews.",
     },
   },
   {
@@ -231,7 +249,7 @@ const SEED_CALLS: SeedCall[] = [
     analysis: {
       category: "VENDOR",
       summary: "Fuel card provider, cold outreach, no existing relationship or internal contact.",
-      recommendation: "Not a fit — no budget alignment or internal sponsor, close out.",
+      recommendation: "Not a fit — no clear budget or internal owner for this.",
       opportunityScore: 22,
       extractedInfo: {
         callerCompany: "FleetFuel Cards",
@@ -250,8 +268,8 @@ const SEED_CALLS: SeedCall[] = [
       opportunityType: "Vendor Pitch",
       score: 22,
       priority: "LOW",
-      status: "LOST",
-      recommendedAction: "Not a fit — no budget alignment, close out.",
+      status: "DISMISSED",
+      recommendedAction: "Not a fit — no clear budget for this.",
     },
   },
 ];
