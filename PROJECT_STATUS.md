@@ -52,6 +52,15 @@ The long-term goal is to become the intelligence layer companies use to understa
 
 ✅ Foundation Phase Complete
 
+✅ Vendor-Call-Intelligence Realignment Complete
+
+Schema, services, onboarding, customer dashboard, admin app, marketing site
+copy, and seed data have all been realigned from the earlier "AI sales rep /
+lead qualification" direction to the current vendor-call-intelligence
+direction (see Database section below for the current schema). Verified via
+`npx tsc --noEmit` (zero errors), `npm run build` (clean production build),
+and `npx prisma db seed` (completes successfully).
+
 Current focus:
 
 - Production stability
@@ -61,7 +70,8 @@ Current focus:
 - Dashboard framework
 - Deployment pipeline
 
-The AI conversation and intelligence engine has NOT been started yet.
+The AI conversation and intelligence engine has NOT been started yet — that
+remains the next phase, unchanged by this realignment.
 
 ---
 
@@ -250,6 +260,18 @@ CallAnalysis
 
 Opportunity
 
+IndustryProfile
+
+`CallCategory` enum: `VENDOR | PARTNERSHIP | OTHER`.
+
+`OpportunityStatus` enum: `NEW | REVIEWED | FLAGGED | DISMISSED` —
+informational triage on a business opportunity, not a sales pipeline or
+deal-stage funnel.
+
+`IndustryProfile` holds per-company `industry`, `vendorCategories`,
+`scoringPriorities`, `goals`, and `terminology` as configuration data, so
+industry-specific behavior is never hardcoded in application code.
+
 The database design should remain flexible for multiple industries.
 
 Future models may include:
@@ -258,7 +280,6 @@ Future models may include:
 - VendorCategory
 - ExistingProvider
 - Recommendation
-- IndustryProfile
 
 Database migrations are synchronized.
 

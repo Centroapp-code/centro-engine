@@ -171,6 +171,7 @@ AI:
 [x] Analytics page
 [x] Call → CallAnalysis → Opportunity schema
 [x] Development seed data system
+[x] Vendor-call-intelligence realignment (schema, services, onboarding, dashboard, admin, marketing copy, seed data — see Database Design Principles below for the current schema)
 
 ---
 
@@ -363,6 +364,12 @@ Prefer general concepts such as:
 - Recommendation
 
 Industry-specific intelligence should be implemented through configurable logic rather than separate hardcoded systems.
+
+Currently implemented (as of the vendor-call-intelligence realignment):
+
+- `IndustryProfile` — one per `Company`, holds `industry`, `vendorCategories`, `scoringPriorities`, `goals`, and `terminology` as configuration data, so industry-specific behavior never needs to be hardcoded in application code.
+- `CallCategory` enum: `VENDOR | PARTNERSHIP | OTHER`.
+- `OpportunityStatus` enum: `NEW | REVIEWED | FLAGGED | DISMISSED` — informational triage on a business opportunity, not a sales pipeline or deal-stage funnel.
 
 ---
 

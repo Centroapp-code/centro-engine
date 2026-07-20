@@ -60,6 +60,21 @@ Implemented:
 - Analytics section
 - Company-based data structure
 
+✅ Vendor-call-intelligence realignment (checkpoint complete)
+- `Company`/`AIAgent` schema fields, `CallCategory`, and `OpportunityStatus`
+  realigned away from the earlier "AI sales rep" direction
+- New `IndustryProfile` model (per-company `industry`, `vendorCategories`,
+  `scoringPriorities`, `goals`, `terminology`) so industry-specific behavior
+  is configuration data, not hardcoded logic
+- `CallCategory`: `VENDOR | PARTNERSHIP | OTHER`
+- `OpportunityStatus`: `NEW | REVIEWED | FLAGGED | DISMISSED` — informational
+  triage on a business opportunity, not a sales pipeline/deal-stage funnel
+- Onboarding wizard, customer dashboard, admin app, and marketing site copy
+  all realigned to vendor-call-intelligence language
+- `prisma/seed.ts` demo data realigned to match
+- Verified: `npx tsc --noEmit` clean, `npm run build` clean, `npx prisma db
+  seed` completes successfully
+
 ### Current Infrastructure
 
 | Service | Status |
