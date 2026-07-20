@@ -8,8 +8,11 @@ import type {
 
 /**
  * Everything a phone network provider (Twilio, and later others) must
- * implement to plug into Centro. No provider implements this yet — see
- * services/phone/registry.ts for how one will be registered once built.
+ * implement to plug into Centro. TwilioPhoneProvider is registered (see
+ * services/phone/registry.ts) and implements receiveCall, the only
+ * operation the incoming-call/call-status webhooks currently need.
+ * createPhoneNumber, transferCall, and endCall are stubbed — each throws
+ * until a future chunk actually needs them.
  */
 export interface PhoneProvider {
   /** Identifies the provider, e.g. "TWILIO". Matches the Prisma PhoneProvider enum. */

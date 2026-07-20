@@ -177,7 +177,6 @@ enum CallStatus {
 }
 
 enum CallCategory {
-  SALES
   VENDOR
   PARTNERSHIP
   OTHER
