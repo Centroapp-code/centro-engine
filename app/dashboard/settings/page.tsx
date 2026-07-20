@@ -8,7 +8,7 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
         <p className="text-sm text-muted-foreground">
-          Manage your company profile, phone number, and AI gatekeeper
+          Manage your company profile, phone number, and AI receptionist
           configuration.
         </p>
       </div>

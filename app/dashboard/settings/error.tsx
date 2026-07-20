@@ -21,7 +21,7 @@ export default function SettingsError({
         <p className="font-medium">Couldn&apos;t load settings</p>
         <p className="text-sm text-muted-foreground">
           Something went wrong while fetching your company profile and AI
-          gatekeeper configuration.
+          receptionist configuration.
         </p>
         <Button variant="outline" size="sm" onClick={() => reset()}>
           Retry

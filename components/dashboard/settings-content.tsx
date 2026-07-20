@@ -92,7 +92,7 @@ export async function SettingsContent() {
       </Card>
 
       <div>
-        <h2 className="text-lg font-medium">AI gatekeeper</h2>
+        <h2 className="text-lg font-medium">AI receptionist</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Configure how Centro greets and screens inbound vendor calls.
         </p>
