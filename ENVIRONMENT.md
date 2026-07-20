@@ -11,6 +11,23 @@ When deploying, set the same variables in the Vercel project settings
 (Project → Settings → Environment Variables) for each environment
 (Production, Preview, Development) instead of committing them.
 
+## Validation
+
+`lib/env.ts` centralizes and validates every server-only variable listed
+below. `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`,
+`CLERK_SECRET_KEY`, and `CLERK_WEBHOOK_SECRET` are required — importing
+`lib/env.ts` throws immediately if any of them are missing, instead of
+failing later inside Prisma, Clerk, or a webhook handler. `instrumentation.ts`
+imports it once at server startup, so a missing variable fails the
+deployment loudly rather than surfacing as a confusing error on whichever
+request happens to hit it first.
+
+`OPENAI_API_KEY`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and
+`TWILIO_PHONE_NUMBER` are tracked as **optional** — typed `string | undefined`
+— since those integrations haven't started yet. Server code should read all
+of these through `env` (`import { env } from "@/lib/env"`), never
+`process.env` directly.
+
 ## Database
 
 | Variable | Description |
