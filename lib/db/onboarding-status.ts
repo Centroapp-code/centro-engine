@@ -4,15 +4,7 @@ import { defaultCompanyName } from "@/lib/db/provisioning";
 import type { Company } from "@/lib/db/generated/client";
 
 function hasPopulatedOnboardingFields(company: Company): boolean {
-  return Boolean(
-    company.industry ||
-      company.companySize ||
-      company.salesTeamSize ||
-      company.primaryGoal ||
-      company.priorities ||
-      company.targetCustomer ||
-      company.notes
-  );
+  return Boolean(company.industry || company.companySize || company.notes);
 }
 
 /**
@@ -43,9 +35,11 @@ export async function resolveOnboardingCompleted({
 
   const hasCustomName = company.name !== defaultCompanyName(email);
   const hasAgent = (await prisma.aIAgent.findUnique({ where: { companyId: company.id } })) !== null;
+  const hasIndustryProfile =
+    (await prisma.industryProfile.findUnique({ where: { companyId: company.id } })) !== null;
   const hasFields = hasPopulatedOnboardingFields(company);
 
-  if (!hasCustomName && !hasAgent && !hasFields) {
+  if (!hasCustomName && !hasAgent && !hasIndustryProfile && !hasFields) {
     return false;
   }
 
