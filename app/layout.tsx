@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { siteMeta } from "@/lib/content/marketing";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Centro | AI Sales Gatekeeper",
-  description:
-    "Centro answers, qualifies, and scores inbound vendor and sales calls on your behalf, so your team only spends time on real opportunities.",
+  title: siteMeta.title,
+  description: siteMeta.description,
 };
 
 export default function RootLayout({

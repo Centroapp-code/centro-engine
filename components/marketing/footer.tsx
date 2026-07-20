@@ -1,30 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
-
-const FOOTER_LINKS = [
-  {
-    heading: "Product",
-    links: [
-      { label: "How it works", href: "#how-it-works" },
-      { label: "Features", href: "#features" },
-      { label: "Pricing", href: "#pricing" },
-    ],
-  },
-  {
-    heading: "Company",
-    links: [
-      { label: "About", href: "#" },
-      { label: "Contact", href: "mailto:sales@centroengine.com" },
-    ],
-  },
-  {
-    heading: "Legal",
-    links: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-    ],
-  },
-];
+import { footerLinks, footerTagline, supportEmail } from "@/lib/content/marketing";
 
 export function Footer() {
   return (
@@ -34,21 +10,21 @@ export function Footer() {
           <div className="max-w-xs">
             <Logo />
             <p className="mt-4 text-sm text-muted-foreground">
-              An AI gatekeeper for every inbound sales call.
+              {footerTagline}
             </p>
             <p className="mt-4 text-sm">
               <span className="text-muted-foreground">Sales: </span>
               <Link
-                href="mailto:sales@centroengine.com"
+                href={`mailto:${supportEmail}`}
                 className="font-medium transition-colors hover:text-primary"
               >
-                sales@centroengine.com
+                {supportEmail}
               </Link>
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-            {FOOTER_LINKS.map((column) => (
+            {footerLinks.map((column) => (
               <div key={column.heading}>
                 <p className="text-sm font-medium">{column.heading}</p>
                 <ul className="mt-3 space-y-2">

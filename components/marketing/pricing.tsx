@@ -12,64 +12,19 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Section, SectionHeading } from "@/components/marketing/section";
-
-const PLANS = [
-  {
-    name: "Starter",
-    description: "For small teams that want to stop fielding every vendor call themselves.",
-    features: [
-      "1 AI gatekeeper",
-      "Up to 250 calls / month",
-      "Pitch qualification & scoring",
-      "Call summaries",
-      "Email support",
-    ],
-    cta: "Join the Waitlist",
-    ctaHref: "mailto:sales@centroengine.com?subject=Centro%20Waitlist%20-%20Starter",
-    highlighted: false,
-  },
-  {
-    name: "Growth",
-    description: "For growing teams that need CRM integration and more volume.",
-    features: [
-      "3 AI gatekeepers",
-      "Up to 1,500 calls / month",
-      "Pitch qualification & scoring",
-      "Call summaries & transcripts",
-      "CRM integration",
-      "Priority support",
-    ],
-    cta: "Join the Waitlist",
-    ctaHref: "mailto:sales@centroengine.com?subject=Centro%20Waitlist%20-%20Growth",
-    highlighted: true,
-  },
-  {
-    name: "Enterprise",
-    description: "For organizations fielding high call volume across teams.",
-    features: [
-      "Unlimited AI gatekeepers",
-      "Custom call volume",
-      "Advanced CRM & workflow integrations",
-      "Dedicated onboarding",
-      "SLA & dedicated support",
-    ],
-    cta: "Contact Sales",
-    ctaHref: "mailto:sales@centroengine.com?subject=Centro%20Enterprise%20Sales",
-    highlighted: false,
-  },
-];
+import { pricingPlans, pricingSection } from "@/lib/content/marketing";
 
 export function Pricing() {
   return (
     <Section id="pricing">
       <SectionHeading
-        eyebrow="Pricing"
-        title="Simple plans that scale with your call volume"
-        description="We're finalizing pricing ahead of launch. Join the waitlist to lock in early access and be first to know when plans go live."
+        eyebrow={pricingSection.eyebrow}
+        title={pricingSection.title}
+        description={pricingSection.description}
       />
 
       <div className="mt-16 grid gap-6 lg:grid-cols-3">
-        {PLANS.map((plan) => (
+        {pricingPlans.map((plan) => (
           <Card
             key={plan.name}
             className={cn(
