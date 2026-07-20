@@ -11,6 +11,20 @@ const isProtectedRoute = createRouteMatcher([
   "/onboarding(.*)",
 ]);
 
+/**
+ * Middleware is authentication + role routing only. It never gates on
+ * onboarding completion — that decision depends on Postgres (the source of
+ * truth), and Postgres isn't reachable from Edge middleware without adding
+ * per-request DB latency to every navigation. The one exception below is a
+ * pure optimization, never a denial: it can only send an already-onboarded
+ * user straight to /dashboard a little faster. It can never send someone to
+ * /onboarding, so a stale or missing claim here can cost at most one extra
+ * hop through the onboarding page's own authoritative check — never a loop.
+ *
+ * The actual gate lives server-side in requireCustomerCompany()
+ * (lib/auth/company.ts) and in app/onboarding/page.tsx, both of which read
+ * User.onboardingCompleted directly from the database on every request.
+ */
 export default clerkMiddleware(async (auth, req) => {
   if (!isProtectedRoute(req)) {
     return;
@@ -36,14 +50,8 @@ export default clerkMiddleware(async (auth, req) => {
     return;
   }
 
-  // CUSTOMER role: gate the dashboard on onboarding completion.
-  const onboardingCompleted = sessionClaims?.metadata?.onboardingCompleted === true;
-
-  if (isDashboardRoute(req) && !onboardingCompleted) {
-    return NextResponse.redirect(new URL("/onboarding", req.url));
-  }
-
-  if (isOnboardingRoute(req) && onboardingCompleted) {
+  // Optimization only (see comment above) — never authoritative.
+  if (isOnboardingRoute(req) && sessionClaims?.metadata?.onboardingCompleted === true) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 });

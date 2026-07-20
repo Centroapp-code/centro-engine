@@ -1,12 +1,13 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { clerkClient } from "@clerk/nextjs/server";
-import { auth, requireCustomerCompany } from "@/lib/auth";
+import { auth, getCurrentCompany } from "@/lib/auth";
 import { prisma } from "@/lib/db/client";
 
 export type OnboardingActionState = {
-  status: "idle" | "success" | "error";
+  status: "idle" | "error";
   message?: string;
 };
 
@@ -36,13 +37,35 @@ function validate(input: OnboardingInput): string | null {
   return null;
 }
 
+/**
+ * Completes onboarding and, on success, redirects straight to /dashboard —
+ * a server-side redirect, not a client reload+push. This is deliberate:
+ * /dashboard's gate (requireCustomerCompany) reads User.onboardingCompleted
+ * directly from Postgres, which this function just committed to in the same
+ * request. There is nothing to wait for — no Clerk token refresh, no client
+ * effect, no timing window to reason about.
+ *
+ * Uses getCurrentCompany() rather than requireCustomerCompany(): the latter
+ * now enforces onboarding completion, and calling it here — before
+ * onboarding is done — would immediately redirect back to /onboarding
+ * instead of ever completing it.
+ *
+ * Idempotent: safe to call more than once for the same company (refresh
+ * mid-flow, a double-submit, or two tabs). Company.update always targets
+ * the same row; AIAgent.upsert is keyed on the unique companyId constraint;
+ * User.update is keyed on the unique clerkId. Repeated calls overwrite with
+ * the latest submitted values — never duplicate rows.
+ */
 export async function completeOnboarding(
   input: OnboardingInput
 ): Promise<OnboardingActionState> {
-  const company = await requireCustomerCompany();
   const { userId } = await auth();
-
   if (!userId) {
+    return { status: "error", message: "You must be signed in to continue." };
+  }
+
+  const company = await getCurrentCompany();
+  if (!company) {
     return { status: "error", message: "You must be signed in to continue." };
   }
 
@@ -95,10 +118,12 @@ export async function completeOnboarding(
     return { status: "error", message: "Failed to save your setup. Please try again." };
   }
 
-  // The database write above is the source of truth and already committed.
-  // A failure here only delays the Clerk session claim catching up (it will
-  // on the next natural token refresh) — it must not be reported to the
-  // user as a failed save when their data was, in fact, saved.
+  // The database write above is the source of truth and already committed —
+  // onboarding has succeeded regardless of what happens below. This sync is
+  // a best-effort optimization only (see proxy.ts), so a failure here must
+  // never be reported to the user as a failed save, and must never block
+  // the redirect. If it fails, the claim simply stays stale/absent — the
+  // next dashboard request still resolves correctly via the DB-backed gate.
   try {
     const client = await clerkClient();
     await client.users.updateUserMetadata(userId, {
@@ -111,5 +136,5 @@ export async function completeOnboarding(
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings");
 
-  return { status: "success" };
+  redirect("/dashboard");
 }

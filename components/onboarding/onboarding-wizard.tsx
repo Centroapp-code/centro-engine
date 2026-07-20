@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
 import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,8 +46,6 @@ function canContinue(step: number, data: OnboardingData): boolean {
 }
 
 export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: string }) {
-  const router = useRouter();
-  const { user } = useUser();
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -79,17 +75,13 @@ export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: s
   function launch() {
     setError(null);
     startTransition(async () => {
+      // On success, completeOnboarding() redirects server-side and this
+      // never returns — the database write it just committed is what
+      // /dashboard's gate checks, so there's no client-side state to
+      // refresh or wait on. Reaching the line below means it returned
+      // instead of redirecting, i.e. an error.
       const result = await completeOnboarding(data);
-      if (result.status !== "success") {
-        setError(result.message ?? "Something went wrong. Please try again.");
-        return;
-      }
-      // Clerk's documented pattern for this exact case: reloading the user
-      // forces an immediate session token refresh, so proxy.ts sees the
-      // updated onboardingCompleted claim on the very next request instead
-      // of waiting for the ~60s automatic refresh cycle.
-      await user?.reload();
-      router.push("/dashboard");
+      setError(result.message ?? "Something went wrong. Please try again.");
     });
   }
 
