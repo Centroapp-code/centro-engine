@@ -90,10 +90,13 @@ export default async function CompanyDetailPage({
         <h2 className="text-lg font-medium">Usage</h2>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
           <StatCard label="Total Calls" value={company.usage.totalCalls.toLocaleString()} />
-          <StatCard label="Total Leads" value={company.usage.totalLeads.toLocaleString()} />
           <StatCard
-            label="Qualified Leads"
-            value={company.usage.qualifiedLeads.toLocaleString()}
+            label="Total Opportunities"
+            value={company.usage.totalOpportunities.toLocaleString()}
+          />
+          <StatCard
+            label="Flagged Opportunities"
+            value={company.usage.flaggedOpportunities.toLocaleString()}
           />
         </div>
       </div>

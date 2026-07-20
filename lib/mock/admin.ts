@@ -18,8 +18,8 @@ export type MockAdminPhoneNumber = {
 
 export type MockAdminUsage = {
   totalCalls: number;
-  totalLeads: number;
-  qualifiedLeads: number;
+  totalOpportunities: number;
+  flaggedOpportunities: number;
 };
 
 export type MockAdminCompany = {
@@ -49,7 +49,7 @@ export const mockAdminCompanies: MockAdminCompany[] = [
     phoneNumbers: [
       { id: "phone_1", phoneNumber: "+1 (555) 201-9000", provider: "Twilio", status: "ACTIVE" },
     ],
-    usage: { totalCalls: 482, totalLeads: 216, qualifiedLeads: 93 },
+    usage: { totalCalls: 482, totalOpportunities: 216, flaggedOpportunities: 93 },
   },
   {
     id: "company_2",
@@ -62,7 +62,7 @@ export const mockAdminCompanies: MockAdminCompany[] = [
     phoneNumbers: [
       { id: "phone_2", phoneNumber: "+1 (555) 442-1180", provider: "Twilio", status: "PENDING" },
     ],
-    usage: { totalCalls: 37, totalLeads: 12, qualifiedLeads: 3 },
+    usage: { totalCalls: 37, totalOpportunities: 12, flaggedOpportunities: 3 },
   },
   {
     id: "company_3",
@@ -78,7 +78,7 @@ export const mockAdminCompanies: MockAdminCompany[] = [
       { id: "phone_3", phoneNumber: "+1 (555) 771-4420", provider: "Twilio", status: "ACTIVE" },
       { id: "phone_4", phoneNumber: "+1 (555) 771-4421", provider: "Twilio", status: "ACTIVE" },
     ],
-    usage: { totalCalls: 1204, totalLeads: 588, qualifiedLeads: 241 },
+    usage: { totalCalls: 1204, totalOpportunities: 588, flaggedOpportunities: 241 },
   },
   {
     id: "company_4",
@@ -91,7 +91,7 @@ export const mockAdminCompanies: MockAdminCompany[] = [
     phoneNumbers: [
       { id: "phone_5", phoneNumber: "+1 (555) 990-3341", provider: "Twilio", status: "INACTIVE" },
     ],
-    usage: { totalCalls: 58, totalLeads: 21, qualifiedLeads: 6 },
+    usage: { totalCalls: 58, totalOpportunities: 21, flaggedOpportunities: 6 },
   },
 ];
 
