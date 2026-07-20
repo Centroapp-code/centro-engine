@@ -5,7 +5,6 @@ import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { OnboardingStepContainer } from "@/components/onboarding/step-container";
 import { SelectionCard } from "@/components/onboarding/selection-card";
 import { LabeledSelect } from "@/components/onboarding/labeled-select";
@@ -13,14 +12,13 @@ import {
   AGENT_TONE_OPTIONS,
   COMPANY_SIZE_OPTIONS,
   CONVERSATION_PRIORITY_OPTIONS,
-  CUSTOMER_TYPE_OPTIONS,
   GOAL_OPTIONS,
   INDUSTRY_OPTIONS,
-  SALES_TEAM_SIZE_OPTIONS,
+  VENDOR_CATEGORY_OPTIONS,
 } from "@/components/onboarding/options";
 import { completeOnboarding, type OnboardingInput } from "@/lib/actions/onboarding";
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 6;
 
 type OnboardingData = OnboardingInput;
 
@@ -33,12 +31,10 @@ function canContinue(step: number, data: OnboardingData): boolean {
     case 1:
       return data.companyName.trim().length > 0 && data.industry.length > 0;
     case 2:
-      return data.companySize.length > 0 && data.salesTeamSize.length > 0;
+      return data.companySize.length > 0 && data.vendorCategories.length > 0;
     case 3:
       return data.goals.length > 0;
     case 4:
-      return data.targetCustomer.length > 0;
-    case 5:
       return data.agentTone.length > 0 && data.conversationPriorities.length > 0;
     default:
       return true;
@@ -54,10 +50,8 @@ export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: s
     companyName: initialCompanyName,
     industry: "",
     companySize: "",
-    salesTeamSize: "",
+    vendorCategories: [],
     goals: [],
-    targetCustomer: "",
-    customerNotes: "",
     agentTone: "",
     conversationPriorities: [],
   });
@@ -95,7 +89,7 @@ export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: s
         totalSteps={TOTAL_STEPS}
         showProgress={false}
         title="Let's set up Centro for your business"
-        description="We'll customize your AI sales agent based on your company, customers, and sales goals. This takes about 2 minutes."
+        description="We'll customize your AI receptionist based on your company and the kinds of vendor calls you receive. This takes about 2 minutes."
         footer={
           <Button className="w-full" size="lg" onClick={next}>
             Get Started
@@ -145,8 +139,8 @@ export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: s
       <OnboardingStepContainer
         step={step}
         totalSteps={TOTAL_STEPS}
-        title="Your business profile"
-        description="A quick sense of your team helps Centro set the right pace."
+        title="What kinds of vendor calls do you get?"
+        description="This helps Centro recognize and prioritize the vendor categories that matter most to your business."
         footer={<StepFooter onBack={back} onNext={next} disabled={!canContinue(step, data)} />}
       >
         <LabeledSelect
@@ -156,13 +150,21 @@ export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: s
           onValueChange={(v) => update("companySize", v)}
           options={COMPANY_SIZE_OPTIONS}
         />
-        <LabeledSelect
-          id="salesTeamSize"
-          label="How many people are involved in sales?"
-          value={data.salesTeamSize}
-          onValueChange={(v) => update("salesTeamSize", v)}
-          options={SALES_TEAM_SIZE_OPTIONS}
-        />
+        <div className="flex flex-col gap-2">
+          <Label>Which vendor categories do you hear from most?</Label>
+          <div className="flex flex-col gap-2">
+            {VENDOR_CATEGORY_OPTIONS.map((category) => (
+              <SelectionCard
+                key={category}
+                label={category}
+                selected={data.vendorCategories.includes(category)}
+                onClick={() =>
+                  update("vendorCategories", toggleValue(data.vendorCategories, category))
+                }
+              />
+            ))}
+          </div>
+        </div>
       </OnboardingStepContainer>
     );
   }
@@ -191,39 +193,6 @@ export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: s
   }
 
   if (step === 4) {
-    return (
-      <OnboardingStepContainer
-        step={step}
-        totalSteps={TOTAL_STEPS}
-        title="Who are your typical customers?"
-        description="Centro uses this to ask smarter qualifying questions."
-        footer={<StepFooter onBack={back} onNext={next} disabled={!canContinue(step, data)} />}
-      >
-        <LabeledSelect
-          id="targetCustomer"
-          label="Customer type"
-          value={data.targetCustomer}
-          onValueChange={(v) => update("targetCustomer", v)}
-          options={CUSTOMER_TYPE_OPTIONS}
-        />
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="customerNotes">
-            Tell us anything about your ideal customer{" "}
-            <span className="text-muted-foreground">(optional)</span>
-          </Label>
-          <Textarea
-            id="customerNotes"
-            rows={3}
-            value={data.customerNotes}
-            onChange={(e) => update("customerNotes", e.target.value)}
-            placeholder="e.g. Mid-size logistics companies already using route optimization software."
-          />
-        </div>
-      </OnboardingStepContainer>
-    );
-  }
-
-  if (step === 5) {
     return (
       <OnboardingStepContainer
         step={step}
@@ -261,13 +230,13 @@ export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: s
     );
   }
 
-  // Step 6 — Review
+  // Step 5 — Review
   return (
     <OnboardingStepContainer
       step={step}
       totalSteps={TOTAL_STEPS}
       title="Review your setup"
-      description="Here's what Centro will use to configure your AI sales agent."
+      description="Here's what Centro will use to configure your AI receptionist."
       footer={
         <div className="flex w-full flex-col gap-3">
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
@@ -288,8 +257,8 @@ export function OnboardingWizard({ initialCompanyName }: { initialCompanyName: s
         <ReviewRow label="Company" value={data.companyName} />
         <ReviewRow label="Industry" value={data.industry} />
         <ReviewRow label="Company size" value={data.companySize} />
+        <ReviewRow label="Vendor categories" value={data.vendorCategories.join(", ")} />
         <ReviewRow label="Goals" value={data.goals.join(", ")} />
-        <ReviewRow label="Customer type" value={data.targetCustomer} />
         <ReviewRow label="Agent style" value={data.agentTone} />
       </dl>
     </OnboardingStepContainer>

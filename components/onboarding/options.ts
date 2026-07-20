@@ -19,28 +19,24 @@ export const COMPANY_SIZE_OPTIONS = [
   "201+ employees",
 ] as const;
 
-export const SALES_TEAM_SIZE_OPTIONS = [
-  "Just me",
-  "1-5",
-  "6-20",
-  "20+",
+export const VENDOR_CATEGORY_OPTIONS = [
+  "Freight & logistics",
+  "Software & IT services",
+  "Marketing & advertising",
+  "Facilities & maintenance",
+  "Insurance & benefits",
+  "Staffing & recruiting",
+  "Financial & banking services",
+  "Consulting",
+  "Equipment & manufacturing supplies",
+  "Other",
 ] as const;
 
 export const GOAL_OPTIONS = [
-  "Capture more inbound leads",
-  "Qualify prospects automatically",
-  "Reduce missed sales opportunities",
-  "Improve response time",
-  "Schedule more sales conversations",
-  "Reduce repetitive sales tasks",
-] as const;
-
-export const CUSTOMER_TYPE_OPTIONS = [
-  "Consumers (B2C)",
-  "Small businesses",
-  "Mid-market companies",
-  "Enterprise companies",
-  "Government organizations",
+  "Stop unsolicited calls from interrupting my team",
+  "Catch genuinely valuable vendor offers we'd otherwise miss",
+  "Get a clear record of every vendor conversation",
+  "Identify cost-saving opportunities from vendors",
 ] as const;
 
 export const AGENT_TONE_OPTIONS = [
@@ -51,9 +47,8 @@ export const AGENT_TONE_OPTIONS = [
 ] as const;
 
 export const CONVERSATION_PRIORITY_OPTIONS = [
-  "Collect contact information",
-  "Understand customer needs",
-  "Qualify buying intent",
-  "Identify urgency",
-  "Schedule follow-up",
+  "Identify the vendor and what they're offering",
+  "Capture pricing and claimed savings",
+  "Note urgency or time-limited offers",
+  "Flag anything relevant to our industry",
 ] as const;
