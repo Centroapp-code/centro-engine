@@ -49,6 +49,7 @@ model IndustryProfile {
   vendorCategories  Json     @default("[]")
   scoringPriorities Json     @default("[]")
   terminology       Json     @default("{}")
+  goals             Json     @default("[]")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   company           Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)

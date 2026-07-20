@@ -15,10 +15,8 @@ export type OnboardingInput = {
   companyName: string;
   industry: string;
   companySize: string;
-  salesTeamSize: string;
+  vendorCategories: string[];
   goals: string[];
-  targetCustomer: string;
-  customerNotes: string;
   agentTone: string;
   conversationPriorities: string[];
 };
@@ -27,9 +25,10 @@ function validate(input: OnboardingInput): string | null {
   if (!input.companyName.trim()) return "Company name is required.";
   if (!input.industry) return "Please select an industry.";
   if (!input.companySize) return "Please select your company size.";
-  if (!input.salesTeamSize) return "Please select your sales team size.";
+  if (input.vendorCategories.length === 0) {
+    return "Please select at least one vendor category.";
+  }
   if (input.goals.length === 0) return "Please select at least one goal.";
-  if (!input.targetCustomer) return "Please select your typical customer type.";
   if (!input.agentTone) return "Please select an agent tone.";
   if (input.conversationPriorities.length === 0) {
     return "Please select at least one conversation priority.";
@@ -52,9 +51,10 @@ function validate(input: OnboardingInput): string | null {
  *
  * Idempotent: safe to call more than once for the same company (refresh
  * mid-flow, a double-submit, or two tabs). Company.update always targets
- * the same row; AIAgent.upsert is keyed on the unique companyId constraint;
- * User.update is keyed on the unique clerkId. Repeated calls overwrite with
- * the latest submitted values — never duplicate rows.
+ * the same row; AIAgent.upsert and IndustryProfile.upsert are keyed on their
+ * unique companyId constraints; User.update is keyed on the unique clerkId.
+ * Repeated calls overwrite with the latest submitted values — never
+ * duplicate rows.
  */
 export async function completeOnboarding(
   input: OnboardingInput
@@ -75,9 +75,8 @@ export async function completeOnboarding(
   }
 
   const companyName = input.companyName.trim();
-  const notes = input.customerNotes.trim();
 
-  const greeting = `Thanks for calling ${companyName}! I'm an AI assistant screening sales calls for this team. Who am I speaking with, and what are you calling about?`;
+  const greeting = `Thanks for calling ${companyName}! I'm an AI assistant that helps route vendor and business calls. Who am I speaking with, and what are you calling about?`;
   const instructions = `${companyName} operates in the ${input.industry} industry. During every call, prioritize: ${input.conversationPriorities.join(", ")}.`;
 
   try {
@@ -88,11 +87,6 @@ export async function completeOnboarding(
           name: companyName,
           industry: input.industry,
           companySize: input.companySize,
-          salesTeamSize: input.salesTeamSize,
-          primaryGoal: input.goals[0] ?? null,
-          priorities: input.goals,
-          targetCustomer: input.targetCustomer,
-          notes: notes || null,
         },
       });
 
@@ -105,6 +99,23 @@ export async function completeOnboarding(
           greeting,
           instructions,
           personality: input.agentTone,
+        },
+      });
+
+      await tx.industryProfile.upsert({
+        where: { companyId: company.id },
+        update: {
+          industry: input.industry,
+          vendorCategories: input.vendorCategories,
+          scoringPriorities: input.conversationPriorities,
+          goals: input.goals,
+        },
+        create: {
+          companyId: company.id,
+          industry: input.industry,
+          vendorCategories: input.vendorCategories,
+          scoringPriorities: input.conversationPriorities,
+          goals: input.goals,
         },
       });
 
