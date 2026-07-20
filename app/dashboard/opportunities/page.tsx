@@ -8,8 +8,8 @@ export default function OpportunitiesPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Opportunities</h1>
         <p className="text-sm text-muted-foreground">
-          Every sales opportunity Centro has qualified and scored from your
-          inbound calls.
+          Every business opportunity Centro has identified and scored from
+          your inbound vendor calls.
         </p>
       </div>
 

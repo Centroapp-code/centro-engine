@@ -29,8 +29,8 @@ export async function AnalyticsContent() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Total Calls" value={stats.totalCalls.toLocaleString()} />
         <StatCard
-          label="Qualified Opportunities"
-          value={stats.qualifiedOpportunities.toLocaleString()}
+          label="Flagged Opportunities"
+          value={stats.flaggedOpportunities.toLocaleString()}
         />
         <StatCard
           label="High-Priority Opportunities"
@@ -63,7 +63,7 @@ export async function AnalyticsContent() {
         <Card>
           <CardHeader>
             <CardTitle>Opportunities by status</CardTitle>
-            <CardDescription>Current pipeline breakdown</CardDescription>
+            <CardDescription>Current status breakdown</CardDescription>
           </CardHeader>
           <CardContent>
             {hasOpportunities ? (
@@ -71,7 +71,7 @@ export async function AnalyticsContent() {
             ) : (
               <p className="py-8 text-center text-sm text-muted-foreground">
                 No opportunities yet. Trends will appear here once Centro
-                qualifies a call.
+                screens a call.
               </p>
             )}
           </CardContent>

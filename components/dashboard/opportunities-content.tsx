@@ -52,7 +52,7 @@ export async function OpportunitiesContent() {
           columns={columns}
           rows={opportunities}
           getRowKey={(opportunity) => opportunity.id}
-          emptyMessage="No opportunities yet. Once Centro qualifies a call, it will show up here."
+          emptyMessage="No opportunities yet. Once Centro screens a call, it will show up here."
         />
       </CardContent>
     </Card>

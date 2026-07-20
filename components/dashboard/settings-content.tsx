@@ -59,7 +59,7 @@ export async function SettingsContent() {
         <CardHeader>
           <CardTitle>Phone number</CardTitle>
           <CardDescription>
-            The number your phone system forwards sales calls to.
+            The number your phone system forwards vendor and business calls to.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -94,7 +94,7 @@ export async function SettingsContent() {
       <div>
         <h2 className="text-lg font-medium">AI gatekeeper</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Configure how Centro greets and qualifies inbound sales calls.
+          Configure how Centro greets and screens inbound vendor calls.
         </p>
         <div className="mt-4 max-w-2xl">
           <AgentConfigForm initial={agentConfig} />

@@ -3,18 +3,16 @@ import type { OpportunityStatus } from "@/lib/db/generated/enums";
 
 const STATUS_TONES: Record<OpportunityStatus, StatusTone> = {
   NEW: "info",
-  CONTACTED: "warning",
-  QUALIFIED: "success",
-  WON: "success",
-  LOST: "neutral",
+  REVIEWED: "neutral",
+  FLAGGED: "warning",
+  DISMISSED: "neutral",
 };
 
 const STATUS_LABELS: Record<OpportunityStatus, string> = {
   NEW: "New",
-  CONTACTED: "Contacted",
-  QUALIFIED: "Qualified",
-  WON: "Won",
-  LOST: "Lost",
+  REVIEWED: "Reviewed",
+  FLAGGED: "Flagged",
+  DISMISSED: "Dismissed",
 };
 
 export function OpportunityStatusBadge({ status }: { status: OpportunityStatus }) {

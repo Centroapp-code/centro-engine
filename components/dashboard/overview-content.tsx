@@ -24,8 +24,8 @@ export async function OverviewContent() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Inbound Calls" value={stats.totalCalls.toLocaleString()} />
         <StatCard
-          label="Qualified Opportunities"
-          value={stats.qualifiedOpportunities.toLocaleString()}
+          label="Flagged Opportunities"
+          value={stats.flaggedOpportunities.toLocaleString()}
         />
         <StatCard
           label="High-Priority Opportunities"

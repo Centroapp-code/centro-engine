@@ -30,7 +30,7 @@ function SaveButton() {
 }
 
 export function AgentConfigForm({ initial }: { initial: AgentConfig }) {
-  const [questions, setQuestions] = useState(initial.qualificationQuestions);
+  const [questions, setQuestions] = useState(initial.screeningQuestions);
   const [state, formAction] = useActionState(updateAgentConfig, INITIAL_STATE);
 
   function updateQuestion(index: number, value: string) {
@@ -51,7 +51,7 @@ export function AgentConfigForm({ initial }: { initial: AgentConfig }) {
         <CardHeader>
           <CardTitle>Agent identity</CardTitle>
           <CardDescription>
-            How your AI sales agent introduces itself on every call.
+            How your AI receptionist introduces itself on every call.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -84,10 +84,9 @@ export function AgentConfigForm({ initial }: { initial: AgentConfig }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Sales instructions</CardTitle>
+          <CardTitle>Screening instructions</CardTitle>
           <CardDescription>
-            What the agent tells callers about your company and how it should
-            handle the conversation.
+            How your AI receptionist should evaluate and prioritize vendor calls.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -108,7 +107,7 @@ export function AgentConfigForm({ initial }: { initial: AgentConfig }) {
               name="transferRules"
               rows={3}
               defaultValue={initial.transferRules}
-              placeholder="e.g. Transfer live if the caller is a warm referral or the deal is over $10k."
+              placeholder="e.g. Transfer live if the caller claims urgent time-limited pricing or represents a known strategic vendor."
             />
           </div>
         </CardContent>
@@ -116,16 +115,16 @@ export function AgentConfigForm({ initial }: { initial: AgentConfig }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Qualification questions</CardTitle>
+          <CardTitle>Screening questions</CardTitle>
           <CardDescription>
-            Questions the agent asks to understand and score every caller.
+            Questions the agent asks to understand and score every vendor call.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           {questions.map((question, index) => (
             <div key={index} className="flex items-center gap-2">
               <Input
-                name="qualificationQuestions"
+                name="screeningQuestions"
                 value={question}
                 onChange={(e) => updateQuestion(index, e.target.value)}
                 placeholder={`Question ${index + 1}`}

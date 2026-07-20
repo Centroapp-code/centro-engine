@@ -6,18 +6,16 @@ import type { OpportunityStatus } from "@/lib/db/generated/enums";
 
 const STATUS_LABELS: Record<OpportunityStatus, string> = {
   NEW: "New",
-  CONTACTED: "Contacted",
-  QUALIFIED: "Qualified",
-  WON: "Won",
-  LOST: "Lost",
+  REVIEWED: "Reviewed",
+  FLAGGED: "Flagged",
+  DISMISSED: "Dismissed",
 };
 
 const STATUS_COLOR_CLASS: Record<OpportunityStatus, string> = {
   NEW: "fill-[#2a78d6] dark:fill-[#3987e5]",
-  CONTACTED: "fill-[#eda100] dark:fill-[#c98500]",
-  QUALIFIED: "fill-[#008300] dark:fill-[#008300]",
-  WON: "fill-[#4a3aa7] dark:fill-[#9085e9]",
-  LOST: "fill-[#e34948] dark:fill-[#e66767]",
+  REVIEWED: "fill-[#8a8f98] dark:fill-[#9a9fa8]",
+  FLAGGED: "fill-[#eda100] dark:fill-[#c98500]",
+  DISMISSED: "fill-[#c1c4ca] dark:fill-[#6b6f78]",
 };
 
 export function OpportunitiesStatusChart({
