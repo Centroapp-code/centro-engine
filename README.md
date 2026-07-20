@@ -1,16 +1,24 @@
 # Centro
 
-Centro is an AI-powered sales phone agent SaaS. Companies route their
-existing "Press 6 for Sales" phone menu option to Centro, which answers
-inbound sales calls, qualifies the caller, collects contact details, scores
-the lead, summarizes the call, and transfers qualified leads to a human
-sales rep.
+Centro is an AI-powered vendor call intelligence SaaS. Companies route
+unsolicited vendor, supplier, and partner calls (freight companies,
+software vendors, service providers, consultants, and other unsolicited
+business callers) to Centro, which answers the call as a professional
+receptionist, extracts structured information from the conversation,
+analyzes its business relevance, and scores it as a potential business
+improvement opportunity — not a sales lead.
+
+Centro is **not** an AI sales representative, and opportunities surfaced by
+Centro are **not** a sales pipeline. Centro's job is to protect employees'
+time from low-value interruptions while making sure genuinely valuable
+vendor conversations (a better freight rate, a relevant piece of software, a
+real cost-saving opportunity) don't get lost.
 
 The project has two main parts:
 
 - **Marketing site** — explains the product, pricing, and handles sign-up/login.
-- **Centro dashboard** — where customers configure their AI agent, phone
-  routing, and view calls, transcripts, and leads.
+- **Centro dashboard** — where customers configure their AI receptionist,
+  phone routing, and view calls, transcripts, and opportunities.
 - **Admin app** — internal tool for Centro staff to manage customers,
   companies, subscriptions, and usage.
 
@@ -103,22 +111,23 @@ Do not begin AI/Twilio development until production authentication is stable.
 
 Build:
 
-1. AI Agent Configuration
+1. Industry / Vendor Intelligence Configuration
    - Company information
-   - Products/services
-   - Agent personality
-   - Qualification questions
-   - Sales instructions
+   - Industry profile (configurable, not hardcoded)
+   - Relevant vendor categories
+   - Scoring weights and criteria
+   - Receptionist personality/greeting
 
 2. AI Conversation Engine
    - OpenAI integration
    - Context-aware conversations
-   - Lead qualification logic
+   - Vendor information capture (identity, offering, pricing, claimed
+     savings, relevant details)
 
 3. AI Analytics
    - Call summaries
-   - Lead scoring
-   - Buying intent analysis
+   - Opportunity scoring
+   - Business impact / potential savings analysis
 
 ### Phase 2 — Voice Integration
 
@@ -139,6 +148,7 @@ Future:
 - Usage tracking
 - Customer onboarding
 - Enterprise features
+- CRM/ERP/procurement integrations (future extension, not core product)
 
 ## Tech stack
 
@@ -155,71 +165,9 @@ Future:
 
 ## Project structure
 
-```
-app/
-  (marketing)/     Public marketing pages
-  dashboard/       Customer dashboard (protected)
-  admin/           Internal admin app (protected)
-  api/             API route handlers
-  sign-in/         Clerk sign-in
-  sign-up/         Clerk sign-up
-  api/webhooks/clerk/  Assigns the default CUSTOMER role on sign-up
-  api/twilio/      incoming-call and call-status webhooks (see below)
-proxy.ts           Clerk middleware — protects /dashboard and /admin,
-                   and enforces CUSTOMER → /dashboard, ADMIN → /admin
-
-components/
-  ui/              Reusable shadcn/ui components
-  auth/            AppHeader, SignOutButton — shared dashboard/admin chrome
-
-lib/
-  db/              Prisma client singleton + generated client
-  auth/            Clerk server helpers, roles, and route guards
-  utils.ts         Shared utilities
-
-services/
-  ai/              agent.ts (load config), conversation.ts (greeting) —
-                   OpenAI-based qualification/scoring is a future addition
-  phone/           PhoneProvider interface, registry, call storage, and
-                   the Twilio implementation under providers/
-  crm/             CRM integrations for pushing qualified leads
-
-prisma/
-  schema.prisma    Database schema
-  migrations/      Version-controlled SQL migrations
-```
-
-## Data model
-
-Multi-tenant: everything hangs off `Company`, and a `User` (synced from
-Clerk via `clerkId`) can belong to one or more companies through
-`CompanyMember`.
-
-- **User** — one row per Clerk identity; `role` mirrors the Clerk
-  `publicMetadata.role` used by auth (see [proxy.ts](./proxy.ts)).
-- **Company** — a customer organization using Centro.
-- **CompanyMember** — join table linking users to the companies they belong to.
-- **AIAgent** — a company's configured AI sales agent (greeting,
-  instructions, qualification questions, active/inactive).
-- **PhoneIntegration** — a phone number routed to Centro for a company,
-  and which provider (currently Twilio only, modeled as an enum so more
-  providers can be added later) handles it.
-- **Call** — a single inbound call, its transcript and AI-generated summary.
-- **Lead** — a qualified opportunity captured from a call, with score and status.
-
-All child tables (`AIAgent`, `PhoneIntegration`, `Call`, `Lead`,
-`CompanyMember`) index and cascade-delete on `companyId`/`userId`, so
-removing a company or user cleans up its data automatically.
-
-## Phone integration
-
-Centro never replaces a company's own phone system. The flow is:
-
-```
-Company phone menu ("Press 6 for Sales")
-  -> forwarded to a Centro phone number
-  -> Centro AI answers
-```
+Inbound vendor/sales call
+-> forwarded to a Centro phone number
+-> Centro AI receptionist answers
 
 Twilio is configured to call two webhooks (see
 [ENVIRONMENT.md](./ENVIRONMENT.md#phone-twilio-voice) for setup):
@@ -240,23 +188,23 @@ know nothing about Twilio. Swapping providers means writing a new
 
 1. Install dependencies:
 
-   ```bash
+```bash
    npm install
-   ```
+```
 
 2. Copy the environment template and fill in your own values (see
    [ENVIRONMENT.md](./ENVIRONMENT.md) for what each variable does and where
    to get it):
 
-   ```bash
+```bash
    cp .env.example .env
-   ```
+```
 
 3. Apply the committed migrations to your database once `DATABASE_URL` is set:
 
-   ```bash
+```bash
    npx prisma migrate deploy
-   ```
+```
 
    When you change `prisma/schema.prisma` yourself, generate a new migration
    with `npx prisma migrate dev --name <description>` instead (requires
@@ -266,9 +214,9 @@ know nothing about Twilio. Swapping providers means writing a new
    calls, AI analyses, and opportunities) so the customer dashboard has
    something to show:
 
-   ```bash
+```bash
    npx prisma db seed
-   ```
+```
 
    Safe to re-run — every row is upserted against a stable id, so seeding
    again updates the same demo records instead of duplicating them. The
@@ -289,9 +237,9 @@ know nothing about Twilio. Swapping providers means writing a new
 
 6. Run the dev server:
 
-   ```bash
+```bash
    npm run dev
-   ```
+```
 
    Open [http://localhost:3000](http://localhost:3000).
 
@@ -304,11 +252,11 @@ initial commit exists). To push it to GitHub:
    README, license, or `.gitignore` — this project already has its own).
 2. Add it as a remote and push:
 
-   ```bash
+```bash
    git remote add origin https://github.com/<your-org-or-username>/<repo-name>.git
    git branch -M main
    git push -u origin main
-   ```
+```
 
 3. Verify on GitHub that `.env` and `lib/db/generated` were **not** uploaded
    — both are excluded via `.gitignore`. Only `.env.example` should appear.
