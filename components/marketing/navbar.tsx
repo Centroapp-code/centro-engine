@@ -33,7 +33,11 @@ export function Navbar() {
           <Button variant="ghost" nativeButton={false} render={<Link href="/sign-in" />}>
             Login
           </Button>
-          <Button nativeButton={false} render={<Link href="/sign-up" />}>
+          <Button
+            nativeButton={false}
+            render={<Link href="/sign-up" />}
+            className="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
+          >
             Start Free Trial
           </Button>
         </div>

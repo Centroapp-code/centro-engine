@@ -28,14 +28,16 @@ export function Pricing() {
           <Card
             key={plan.name}
             className={cn(
-              "flex flex-col border-border/60",
-              plan.highlighted && "border-primary ring-1 ring-primary"
+              "flex h-full flex-col transition-shadow hover:shadow-md",
+              plan.highlighted && "ring-1 ring-blue-600 dark:ring-blue-500"
             )}
           >
             <CardHeader>
               <div className="flex items-center gap-2">
                 <CardTitle className="text-lg">{plan.name}</CardTitle>
-                {plan.highlighted ? <Badge>Most popular</Badge> : null}
+                {plan.highlighted ? (
+                  <Badge className="bg-blue-600 text-white dark:bg-blue-500">Most popular</Badge>
+                ) : null}
               </div>
               <CardDescription>{plan.description}</CardDescription>
               <div className="mt-4 flex items-baseline gap-1">
@@ -49,7 +51,7 @@ export function Pricing() {
               <ul className="space-y-3">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2 text-sm">
-                    <Check className="mt-0.5 size-4 shrink-0 text-primary" />
+                    <Check className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -58,7 +60,12 @@ export function Pricing() {
 
             <CardFooter>
               <Button
-                className="w-full"
+                size="lg"
+                className={cn(
+                  "w-full",
+                  plan.highlighted &&
+                    "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
+                )}
                 variant={plan.highlighted ? "default" : "outline"}
                 nativeButton={false}
                 render={<Link href={plan.ctaHref} />}

@@ -17,12 +17,12 @@ export function HowItWorks() {
           {howItWorks.map((step, index) => (
             <div key={step.title} className="flex w-full flex-col items-center">
               <div className="flex w-full items-start gap-4 rounded-xl border bg-card p-5 text-left shadow-sm">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
                   <step.icon className="size-5" />
                 </div>
                 <div>
-                  <p className="font-medium">{step.title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
+                  <p className="text-base font-medium leading-snug">{step.title}</p>
+                  <p className="mt-1.5 text-sm text-muted-foreground">
                     {step.description}
                   </p>
                 </div>

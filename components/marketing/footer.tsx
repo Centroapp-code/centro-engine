@@ -1,17 +1,29 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
-import { footerLinks, footerTagline, supportEmail } from "@/lib/content/marketing";
+import { footerLinks, footerTagline, hero, supportEmail } from "@/lib/content/marketing";
 
 export function Footer() {
   return (
     <footer className="border-t border-border/60">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 border-b border-border/60 px-6 py-12 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-lg font-medium tracking-tight">{footerTagline}</p>
+        <Button
+          size="lg"
+          nativeButton={false}
+          render={<Link href={hero.primaryCta.href} />}
+          className="w-fit bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
+        >
+          {hero.primaryCta.label}
+          <ArrowRight />
+        </Button>
+      </div>
+
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
           <div className="max-w-xs">
             <Logo />
-            <p className="mt-4 text-sm text-muted-foreground">
-              {footerTagline}
-            </p>
             <p className="mt-4 text-sm">
               <span className="text-muted-foreground">Sales: </span>
               <Link
