@@ -5,6 +5,7 @@ import { DEFAULT_ROLE } from "@/lib/auth/roles";
 import { ensureUserWithCompany } from "@/lib/db/provisioning";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 type ClerkUserEventData = {
   id: string;
@@ -26,7 +27,16 @@ function isUserCreatedEvent(event: ClerkWebhookEvent): event is ClerkUserCreated
   );
 }
 
+// Legitimate volume here is one event per real sign-up — a small multiple
+// of that comfortably covers normal bursts without meaningfully limiting a
+// direct flood against this public endpoint.
+const RATE_LIMIT = { limit: 30, windowMs: 60_000 };
+
 export async function POST(req: Request) {
+  if (!checkRateLimit({ route: "clerk_webhook", request: req, ...RATE_LIMIT })) {
+    return new Response("Too many requests", { status: 429 });
+  }
+
   const headerList = await headers();
   const svixId = headerList.get("svix-id");
   const svixTimestamp = headerList.get("svix-timestamp");

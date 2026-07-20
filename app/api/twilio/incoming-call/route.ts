@@ -8,6 +8,7 @@ import {
 import { parseTwilioParams, verifyTwilioSignature } from "@/services/phone/providers";
 import { getActiveAgent, startConversation } from "@/services/ai";
 import { logger } from "@/lib/logger";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 function twiml(response: InstanceType<typeof twilio.twiml.VoiceResponse>) {
   return new NextResponse(response.toString(), {
@@ -23,7 +24,19 @@ function errorTwiml(message: string) {
   return twiml(response);
 }
 
+// Twilio's own webhook traffic comes from a shared pool of Twilio IPs, and
+// a single caller can legitimately place several calls in a row — so this
+// stays generous enough to never plausibly trip on real usage at this
+// scale, while still blunting a direct flood against this public endpoint.
+// Checked before parsing the request body, so a flood is rejected as
+// cheaply as possible.
+const RATE_LIMIT = { limit: 60, windowMs: 60_000 };
+
 export async function POST(request: Request) {
+  if (!checkRateLimit({ route: "twilio_incoming_call", request, ...RATE_LIMIT })) {
+    return errorTwiml("We're unable to process this call right now. Please try again shortly.");
+  }
+
   const params = await parseTwilioParams(request);
   const signature = request.headers.get("x-twilio-signature");
 

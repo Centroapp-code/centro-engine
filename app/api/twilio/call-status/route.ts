@@ -2,8 +2,21 @@ import { NextResponse } from "next/server";
 import { completeCallRecord } from "@/services/phone";
 import { parseTwilioParams, verifyTwilioSignature } from "@/services/phone/providers";
 import { logger } from "@/lib/logger";
+import { checkRateLimit } from "@/lib/rate-limit";
+
+// A single call can generate several status callbacks (initiated, ringing,
+// answered, completed), and Twilio retries this callback on failed delivery
+// — both count against the same shared pool of Twilio source IPs. Kept
+// generous so normal volume, including retries, never plausibly trips it;
+// a 429 here just tells Twilio to back off, which is how its own retry
+// schedule is designed to be used, not something that breaks it.
+const RATE_LIMIT = { limit: 120, windowMs: 60_000 };
 
 export async function POST(request: Request) {
+  if (!checkRateLimit({ route: "twilio_call_status", request, ...RATE_LIMIT })) {
+    return new NextResponse("Too many requests", { status: 429 });
+  }
+
   const params = await parseTwilioParams(request);
   const signature = request.headers.get("x-twilio-signature");
 

@@ -338,9 +338,71 @@ When you're ready to deploy:
 4. `npm install` runs `postinstall` → `prisma generate` automatically on
    Vercel, so the generated Prisma client is always in sync with
    `prisma/schema.prisma` — no manual step needed.
-5. Apply committed migrations to the production database with
-   `npx prisma migrate deploy` before or as part of the deploy — Vercel
-   does not run this automatically.
+5. Migrations apply automatically as part of every Vercel deploy — see
+   "Deployment pipeline" below. No manual `prisma migrate deploy` step is
+   needed, and there's no way to ship a deploy that skips it.
+
+## Deployment pipeline
+
+Vercel runs a special `vercel-build` script instead of `build` when one is
+present in `package.json` — this project defines one specifically so
+migrations can never be forgotten again (a real incident this project has
+already hit once: a deploy shipped ahead of its migrations, and the app
+failed in production with `P2021: table "users" does not exist`).
+
+```json
+"build": "next build",
+"vercel-build": "prisma migrate deploy && next build"
+```
+
+**Build-time order, on every Vercel deploy:**
+
+1. `npm install` → triggers `postinstall` → `prisma generate` (regenerates
+   the Prisma Client from `prisma/schema.prisma`, so it's always in sync
+   with the committed schema before anything else runs).
+2. Vercel detects `vercel-build` and runs it instead of `build`:
+   1. `prisma migrate deploy` — applies any migrations under
+      `prisma/migrations/` that aren't yet recorded in the production
+      database's `_prisma_migrations` table, in order. Uses the same
+      `DATABASE_URL` configured for the Production environment. Doesn't
+      touch a shadow database (that's only for `prisma migrate dev`) and
+      needs no separate credentials.
+   2. The `&&` means a migration failure **stops the deploy immediately** —
+      `next build` never runs, so Vercel never promotes new application
+      code to run against a database schema it doesn't match. This is what
+      makes skipping a migration structurally impossible: this script,
+      not a person remembering a manual step, is what runs on every deploy.
+   3. `next build` — only runs once migrations have succeeded.
+3. Vercel deploys the build output, but doesn't yet route any traffic to it.
+
+**Runtime startup order, on every cold start of the deployed app** (a new
+serverless instance spinning up, independent of the build above):
+
+1. Next.js's `instrumentation.ts` `register()` hook runs, once, before the
+   instance accepts any request. In the Node.js runtime only, it calls
+   `validateEnv()` (`lib/env.ts`) — if a required environment variable is
+   missing, the instance throws immediately and fails to boot, rather than
+   serving traffic that would fail unpredictably later. See
+   [ENVIRONMENT.md § Validation](./ENVIRONMENT.md#validation).
+2. Only after that succeeds does the instance begin serving requests:
+   `proxy.ts` middleware runs per-request for protected routes, and
+   `lib/db/client.ts`'s Prisma Client singleton is created lazily on first
+   use.
+
+Because the database schema is guaranteed migrated *before* `next build`
+even runs (step 2.1 above), and environment variables are validated
+*before* any instance serves traffic (runtime step 1), there's no ordering
+gap where new application code could run against a stale schema or a
+missing credential.
+
+**One thing to verify yourself, not something this change can guarantee**:
+if a Preview deployment's environment variables happen to point at the
+*same* `DATABASE_URL` as Production (rather than its own database/branch),
+`vercel-build` will run `prisma migrate deploy` against production from a
+preview deploy too. This is almost certainly not your setup if you're using
+Neon's per-branch databases as intended, but it's worth confirming in
+Vercel's environment variable scoping (Production vs. Preview) rather than
+assuming.
 
 ## Learn more
 
