@@ -41,9 +41,9 @@ export type OpportunityStatusCount = {
   count: number;
 };
 
-const STATUS_ORDER: OpportunityStatus[] = ["NEW", "CONTACTED", "QUALIFIED", "WON", "LOST"];
+const STATUS_ORDER: OpportunityStatus[] = ["NEW", "REVIEWED", "FLAGGED", "DISMISSED"];
 
-/** Opportunity counts per pipeline status, in a fixed funnel display order. */
+/** Opportunity counts per status, in a fixed display order. */
 export async function getOpportunityStatusCounts(
   companyId: string
 ): Promise<OpportunityStatusCount[]> {

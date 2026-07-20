@@ -26,7 +26,7 @@ export type IncomingCall = {
 
 export type TransferCallParams = {
   providerCallId: string;
-  /** E.164 number of the human sales rep to transfer the call to. */
+  /** E.164 number of the human team member to transfer the call to. */
   transferTo: string;
 };
 

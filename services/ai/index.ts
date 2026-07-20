@@ -1,3 +1,3 @@
-// AI services (OpenAI): call qualification, lead scoring, summarization.
+// AI services (OpenAI): call analysis, opportunity scoring, summarization.
 export * from "./agent";
 export * from "./conversation";

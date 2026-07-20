@@ -11,7 +11,7 @@ export type AgentConfigActionState = {
 
 function parseQuestions(formData: FormData): string[] {
   return formData
-    .getAll("qualificationQuestions")
+    .getAll("screeningQuestions")
     .map((value) => String(value).trim())
     .filter(Boolean);
 }
@@ -27,7 +27,7 @@ export async function updateAgentConfig(
   const instructions = String(formData.get("instructions") ?? "").trim();
   const personality = String(formData.get("personality") ?? "").trim();
   const transferRules = String(formData.get("transferRules") ?? "").trim();
-  const qualificationQuestions = parseQuestions(formData);
+  const screeningQuestions = parseQuestions(formData);
 
   if (!name) {
     return { status: "error", message: "Agent name is required." };
@@ -42,7 +42,7 @@ export async function updateAgentConfig(
     instructions,
     personality: personality || null,
     transferRules: transferRules || null,
-    qualificationQuestions,
+    screeningQuestions,
   };
 
   try {

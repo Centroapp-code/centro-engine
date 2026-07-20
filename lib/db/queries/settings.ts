@@ -43,7 +43,7 @@ export type AgentConfig = {
   instructions: string;
   personality: string;
   transferRules: string;
-  qualificationQuestions: string[];
+  screeningQuestions: string[];
 };
 
 const DEFAULT_AGENT_CONFIG: AgentConfig = {
@@ -53,7 +53,7 @@ const DEFAULT_AGENT_CONFIG: AgentConfig = {
   instructions: "",
   personality: "",
   transferRules: "",
-  qualificationQuestions: [],
+  screeningQuestions: [],
 };
 
 export async function getAgentConfig(companyId: string): Promise<AgentConfig> {
@@ -72,8 +72,8 @@ export async function getAgentConfig(companyId: string): Promise<AgentConfig> {
     instructions: agent.instructions,
     personality: agent.personality ?? "",
     transferRules: agent.transferRules ?? "",
-    qualificationQuestions: Array.isArray(agent.qualificationQuestions)
-      ? (agent.qualificationQuestions as string[])
+    screeningQuestions: Array.isArray(agent.screeningQuestions)
+      ? (agent.screeningQuestions as string[])
       : [],
   };
 }

@@ -21,7 +21,7 @@ export interface PhoneProvider {
   /** Normalizes a provider webhook payload into an IncomingCall. */
   receiveCall(payload: unknown): Promise<IncomingCall>;
 
-  /** Transfers an in-progress call to a human sales rep. */
+  /** Transfers an in-progress call to a human team member. */
   transferCall(params: TransferCallParams): Promise<void>;
 
   /** Ends an in-progress call. */

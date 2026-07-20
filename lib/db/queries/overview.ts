@@ -2,16 +2,16 @@ import { prisma } from "@/lib/db/client";
 
 export type OverviewStats = {
   totalCalls: number;
-  qualifiedOpportunities: number;
+  flaggedOpportunities: number;
   highPriorityOpportunities: number;
   avgOpportunityScore: number | null;
 };
 
 export async function getOverviewStats(companyId: string): Promise<OverviewStats> {
-  const [totalCalls, qualifiedOpportunities, highPriorityOpportunities, scoreAggregate] =
+  const [totalCalls, flaggedOpportunities, highPriorityOpportunities, scoreAggregate] =
     await Promise.all([
       prisma.call.count({ where: { companyId } }),
-      prisma.opportunity.count({ where: { companyId, status: "QUALIFIED" } }),
+      prisma.opportunity.count({ where: { companyId, status: "FLAGGED" } }),
       prisma.opportunity.count({ where: { companyId, priority: "HIGH" } }),
       prisma.opportunity.aggregate({
         where: { companyId, score: { not: null } },
@@ -21,7 +21,7 @@ export async function getOverviewStats(companyId: string): Promise<OverviewStats
 
   return {
     totalCalls,
-    qualifiedOpportunities,
+    flaggedOpportunities,
     highPriorityOpportunities,
     avgOpportunityScore:
       scoreAggregate._avg.score !== null
