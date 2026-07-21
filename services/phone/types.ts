@@ -39,10 +39,18 @@ export type NewCallParams = {
   companyId: string;
   providerCallId: string;
   callerPhone: string;
+  /** Initial conversation turn history (e.g. the greeting), if any. */
+  conversationState?: unknown;
 };
 
 /** Recorded once the provider reports the call as complete. */
 export type CompleteCallParams = {
   providerCallId: string;
   duration: number;
+};
+
+/** Persists the live conversation loop's turn history between webhook calls. */
+export type UpdateConversationStateParams = {
+  providerCallId: string;
+  conversationState: unknown;
 };

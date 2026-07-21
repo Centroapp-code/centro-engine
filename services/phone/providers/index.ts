@@ -5,4 +5,10 @@ registerPhoneProvider(new TwilioPhoneProvider());
 
 export { TwilioPhoneProvider };
 export { verifyTwilioSignature } from "./twilio-signature";
-export { parseTwilioParams } from "./twilio-request";
+export { parseTwilioParams, getPublicRequestUrl } from "./twilio-request";
+export {
+  GATHER_ACTION_PATH,
+  twimlResponse,
+  sayAndHangupTwiml,
+  sayAndGatherTwiml,
+} from "./twilio-twiml";

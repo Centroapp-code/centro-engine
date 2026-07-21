@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { completeCallRecord } from "@/services/phone";
-import { parseTwilioParams, verifyTwilioSignature } from "@/services/phone/providers";
+import {
+  getPublicRequestUrl,
+  parseTwilioParams,
+  verifyTwilioSignature,
+} from "@/services/phone/providers";
 import { logger } from "@/lib/logger";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -20,7 +24,7 @@ export async function POST(request: Request) {
   const params = await parseTwilioParams(request);
   const signature = request.headers.get("x-twilio-signature");
 
-  if (!verifyTwilioSignature({ signature, url: request.url, params })) {
+  if (!verifyTwilioSignature({ signature, url: getPublicRequestUrl(request), params })) {
     logger.warn("twilio.call_status.invalid_signature");
     return new NextResponse("Invalid signature", { status: 403 });
   }
