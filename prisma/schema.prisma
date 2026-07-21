@@ -98,18 +98,23 @@ model PhoneIntegration {
 }
 
 model Call {
-  id             String        @id @default(cuid())
-  companyId      String
-  callerName     String?
-  callerPhone    String
-  duration       Int?
-  transcript     String?
-  createdAt      DateTime      @default(now())
-  providerCallId String?       @unique
-  status         CallStatus    @default(PENDING)
-  analysis       CallAnalysis?
-  company        Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  opportunity    Opportunity?
+  id                String        @id @default(cuid())
+  companyId         String
+  callerName        String?
+  callerPhone       String
+  duration          Int?
+  transcript        String?
+  createdAt         DateTime      @default(now())
+  providerCallId    String?       @unique
+  status            CallStatus    @default(PENDING)
+  /// Turn history and any other in-progress state for the live conversation
+  /// loop (services/ai/conversation.ts), keyed by providerCallId across the
+  /// stateless per-turn /api/twilio/gather webhook calls. Not read once the
+  /// call completes — post-call analysis works from `transcript`, not this.
+  conversationState Json          @default("{}")
+  analysis          CallAnalysis?
+  company           Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  opportunity       Opportunity?
 
   @@index([companyId])
   @@map("calls")
