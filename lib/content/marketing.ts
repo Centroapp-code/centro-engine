@@ -23,9 +23,9 @@ export type SiteMeta = {
 };
 
 export const siteMeta: SiteMeta = {
-  title: "Centro | AI Sales Gatekeeper",
+  title: "Centro | AI Vendor Call Intelligence",
   description:
-    "Centro answers, qualifies, and scores inbound vendor and sales calls on your behalf, so your team only spends time on real opportunities.",
+    "Centro answers, screens, and analyzes inbound vendor and business calls on your behalf, so your team only spends time on real opportunities.",
 };
 
 export const supportEmail = "sales@centroengine.com";
@@ -44,10 +44,10 @@ export type HeroContent = {
 };
 
 export const hero: HeroContent = {
-  badge: "AI Sales Gatekeeper",
-  headline: "An AI gatekeeper for every inbound sales call.",
+  badge: "AI Vendor Call Intelligence",
+  headline: "Never miss a real opportunity in a vendor call again.",
   subheadline:
-    "Centro connects to your existing phone system and answers calls from vendors and salespeople on your behalf — qualifying every pitch, scoring the opportunity, and summarizing it in your dashboard before your team ever picks up.",
+    "Centro connects to your existing phone system and answers calls from vendors, suppliers, and partners on your behalf — extracting the details, scoring the business value, and summarizing it in your dashboard before your team ever picks up.",
   primaryCta: { label: "Start Free Trial", href: "/sign-up" },
   secondaryCta: { label: "Login", href: "/sign-in" },
 };
@@ -66,7 +66,7 @@ export type Feature = {
 
 export const featuresSection: SectionHeadingContent = {
   eyebrow: "Features",
-  title: "Everything you need to screen inbound sales calls",
+  title: "Everything you need to make sense of inbound vendor calls.",
   description:
     "Centro handles the full lifecycle of every vendor call, from greeting to decision.",
 };
@@ -74,15 +74,15 @@ export const featuresSection: SectionHeadingContent = {
 export const features: Feature[] = [
   {
     icon: Bot,
-    title: "AI Gatekeeper",
+    title: "AI Receptionist",
     description:
-      "A natural-sounding AI answers every inbound sales call instantly, so your team doesn't have to.",
+      "A natural-sounding AI answers every inbound vendor call instantly, so your team doesn't have to.",
   },
   {
     icon: ClipboardCheck,
-    title: "Pitch Qualification",
+    title: "Call Intelligence",
     description:
-      "Centro asks the right questions to understand what's being sold and why it matters.",
+      "Centro extracts what's being offered and why it matters, straight from the conversation.",
   },
   {
     icon: FileText,
@@ -94,13 +94,13 @@ export const features: Feature[] = [
     icon: TrendingUp,
     title: "Opportunity Scoring",
     description:
-      "Every pitch is scored so your team knows exactly which ones are worth a follow-up.",
+      "Every call is scored so your team knows exactly which ones are worth a follow-up.",
   },
   {
     icon: Plug,
-    title: "CRM Integration",
+    title: "Exportable Insights",
     description:
-      "Worthwhile opportunities flow directly into the CRM your team already uses.",
+      "Opportunities can be exported to the tools your team already uses.",
   },
   {
     icon: PhoneForwarded,
@@ -118,7 +118,7 @@ export type Step = {
 
 export const howItWorksSection: SectionHeadingContent = {
   eyebrow: "How it works",
-  title: "From sales call to qualified opportunity",
+  title: "From vendor call to scored opportunity.",
   description:
     "Centro slots into the phone system you already have — no new number, no new hardware.",
 };
@@ -126,8 +126,8 @@ export const howItWorksSection: SectionHeadingContent = {
 export const howItWorks: Step[] = [
   {
     icon: Phone,
-    title: "A salesperson calls your business",
-    description: "A vendor or rep dials in, hoping to reach a decision-maker.",
+    title: "A vendor calls your business",
+    description: "A supplier, vendor, or service provider dials in, hoping to reach a decision-maker.",
   },
   {
     icon: Grid2x2,
@@ -137,12 +137,12 @@ export const howItWorks: Step[] = [
   {
     icon: Bot,
     title: "Centro answers",
-    description: "A Centro AI gatekeeper greets the caller and finds out who they are.",
+    description: "A Centro AI receptionist greets the caller and finds out who they are.",
   },
   {
     icon: ClipboardCheck,
-    title: "Centro qualifies the pitch",
-    description: "Centro asks the right questions and scores whether it's worth your time.",
+    title: "Centro analyzes the call",
+    description: "Centro extracts the details and scores whether it's worth your team's time.",
   },
   {
     icon: Users,
@@ -172,9 +172,9 @@ export const pricingPlans: PricingPlan[] = [
     name: "Starter",
     description: "For small teams that want to stop fielding every vendor call themselves.",
     features: [
-      "1 AI gatekeeper",
+      "1 AI receptionist",
       "Up to 250 calls / month",
-      "Pitch qualification & scoring",
+      "Call analysis & opportunity scoring",
       "Call summaries",
       "Email support",
     ],
@@ -184,13 +184,13 @@ export const pricingPlans: PricingPlan[] = [
   },
   {
     name: "Growth",
-    description: "For growing teams that need CRM integration and more volume.",
+    description: "For growing teams that need exportable reporting and more volume.",
     features: [
-      "3 AI gatekeepers",
+      "3 AI receptionists",
       "Up to 1,500 calls / month",
-      "Pitch qualification & scoring",
+      "Call analysis & opportunity scoring",
       "Call summaries & transcripts",
-      "CRM integration",
+      "Exportable opportunity reports",
       "Priority support",
     ],
     cta: "Join the Waitlist",
@@ -201,9 +201,9 @@ export const pricingPlans: PricingPlan[] = [
     name: "Enterprise",
     description: "For organizations fielding high call volume across teams.",
     features: [
-      "Unlimited AI gatekeepers",
+      "Unlimited AI receptionists",
       "Custom call volume",
-      "Advanced CRM & workflow integrations",
+      "Advanced export & workflow integrations",
       "Dedicated onboarding",
       "SLA & dedicated support",
     ],
@@ -227,22 +227,22 @@ export const faqs: Faq[] = [
   {
     question: "Does Centro replace our existing phone system?",
     answer:
-      "No. Centro connects to the phone system you already have and handles inbound sales calls on your behalf. Everything else keeps working exactly as it does today.",
+      "No. Centro connects to the phone system you already have and handles inbound vendor and business calls on your behalf. Everything else keeps working exactly as it does today.",
   },
   {
-    question: "How does Centro qualify a sales call?",
+    question: "How does Centro analyze a vendor call?",
     answer:
       "Centro asks a configurable set of questions during the call to understand who's calling and what they're offering, then scores the opportunity before it reaches your team.",
   },
   {
-    question: "What happens after a call is qualified?",
+    question: "What happens after a call is analyzed?",
     answer:
-      "Centro can transfer a genuinely worthwhile call live to your team, or save the summary, score, and contact details to your dashboard for later review.",
+      "Centro can optionally be configured to transfer a genuinely worthwhile call live to your team, or save the summary, score, and contact details to your dashboard for later review.",
   },
   {
     question: "Can Centro send opportunities to our CRM?",
     answer:
-      "Yes. Growth and Enterprise plans include CRM integration, so qualified opportunities flow directly into the CRM your team already uses.",
+      "Exporting opportunities to external CRMs and workflow tools is on our roadmap, not yet available. Today, every opportunity Centro identifies is scored and summarized in your Centro dashboard.",
   },
   {
     question: "Do we need any new hardware or phone numbers?",
@@ -256,7 +256,7 @@ export const faqs: Faq[] = [
   },
 ];
 
-export const footerTagline = "An AI gatekeeper for every inbound sales call.";
+export const footerTagline = "AI-powered vendor call intelligence for busy teams.";
 
 export type FooterLinkColumn = {
   heading: string;
