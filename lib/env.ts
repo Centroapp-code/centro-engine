@@ -15,6 +15,7 @@ const OPTIONAL_KEYS = [
   "TWILIO_ACCOUNT_SID",
   "TWILIO_AUTH_TOKEN",
   "TWILIO_PHONE_NUMBER",
+  "KEEP_ALIVE_SECRET",
 ] as const;
 
 type RequiredKey = (typeof REQUIRED_KEYS)[number];
@@ -46,6 +47,7 @@ export const env: Env = {
   TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || undefined,
   TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || undefined,
   TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER || undefined,
+  KEEP_ALIVE_SECRET: process.env.KEEP_ALIVE_SECRET || undefined,
 };
 
 /**

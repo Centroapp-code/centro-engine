@@ -13,6 +13,7 @@ import {
   getIndustryProfile,
   type ConversationState,
 } from "@/services/ai";
+import { isConnectionTimeoutError } from "@/lib/db/client";
 import { logger } from "@/lib/logger";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -204,6 +205,14 @@ export async function POST(request: Request) {
       callSid: params.CallSid,
       message: error instanceof Error ? error.message : "unknown error",
     });
+
+    // A slow/suspended DB connection (see connectionTimeoutMillis in
+    // lib/db/client.ts) fails fast and predictably rather than hanging —
+    // no retry, just a distinct, honest message for this specific case.
+    if (isConnectionTimeoutError(error)) {
+      return sayAndHangupTwiml("We're sorry, please try your call again in a moment.");
+    }
+
     return sayAndHangupTwiml("We're experiencing a technical issue. Please try again later.");
   }
 }

@@ -12,6 +12,7 @@ import {
   verifyTwilioSignature,
 } from "@/services/phone/providers";
 import { getActiveAgent, startConversation } from "@/services/ai";
+import { isConnectionTimeoutError } from "@/lib/db/client";
 import { logger } from "@/lib/logger";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -46,12 +47,20 @@ export async function POST(request: Request) {
   }
 
   try {
+    // TEMPORARY diagnostic timing — investigating a 14.7s application-code
+    // request this morning, suspected Neon cold-start after an idle
+    // overnight gap. Remove once confirmed/resolved.
+    const tStart = performance.now();
+
     // 1. Identify company — Centro never replaces a company's own phone
     // system, so every incoming call must map to a company via the Centro
     // number their phone menu forwarded it to.
     const provider = getPhoneProvider("TWILIO");
     const incoming = await provider.receiveCall(params);
+    const tReceiveCall = performance.now();
+
     const company = await findCompanyByPhoneNumber(incoming.to);
+    const tCompanyLookup = performance.now();
 
     if (!company) {
       logger.warn("twilio.incoming_call.unrecognized_number", { callSid: params.CallSid });
@@ -60,6 +69,7 @@ export async function POST(request: Request) {
 
     // 2. Load AI agent configuration
     const agent = await getActiveAgent(company.id);
+    const tAgentLookup = performance.now();
 
     if (!agent) {
       logger.warn("twilio.incoming_call.no_active_agent", {
@@ -69,8 +79,10 @@ export async function POST(request: Request) {
       return sayAndHangupTwiml("No agent is currently available for this call. Goodbye.");
     }
 
-    // 3. Start conversation
+    // 3. Start conversation — synchronous, no OpenAI call happens here;
+    // startConversation() just returns the agent's configured greeting.
     const turn = startConversation(agent);
+    const tConversationStart = performance.now();
 
     // 4. Store call information, including the initial conversation state
     // (the greeting as the first assistant turn) so /api/twilio/gather has
@@ -80,6 +92,18 @@ export async function POST(request: Request) {
       providerCallId: incoming.providerCallId,
       callerPhone: incoming.from,
       conversationState: turn.state,
+    });
+    const tCreateCall = performance.now();
+
+    logger.info("twilio.incoming_call.timing", {
+      callSid: params.CallSid,
+      companyId: company.id,
+      receiveCallMs: Math.round(tReceiveCall - tStart),
+      companyLookupMs: Math.round(tCompanyLookup - tReceiveCall),
+      agentLookupMs: Math.round(tAgentLookup - tCompanyLookup),
+      conversationStartMs: Math.round(tConversationStart - tAgentLookup),
+      createCallMs: Math.round(tCreateCall - tConversationStart),
+      totalMs: Math.round(tCreateCall - tStart),
     });
 
     logger.info("twilio.incoming_call.answered", {
@@ -93,6 +117,14 @@ export async function POST(request: Request) {
       callSid: params.CallSid,
       message: error instanceof Error ? error.message : "unknown error",
     });
+
+    // A slow/suspended DB connection (see connectionTimeoutMillis in
+    // lib/db/client.ts) fails fast and predictably rather than hanging —
+    // no retry, just a distinct, honest message for this specific case.
+    if (isConnectionTimeoutError(error)) {
+      return sayAndHangupTwiml("We're sorry, please try your call again in a moment.");
+    }
+
     return sayAndHangupTwiml("We're experiencing a technical issue. Please try again later.");
   }
 }

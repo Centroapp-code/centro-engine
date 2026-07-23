@@ -133,6 +133,35 @@ invalid signature are rejected with `403` before any business logic runs.
 For local development, use a tunnel (e.g. `ngrok`) so Twilio can reach
 `http://localhost:3000`.
 
+## Keep-alive (Neon compute)
+
+Neon's serverless compute suspends after ~5 minutes of inactivity and can
+take anywhere from under a second to well over a minute to resume on the
+next connection — long enough, in the worst case, to exceed Twilio's own
+~15s webhook timeout and drop a live call. `app/api/internal/keep-alive`
+runs a trivial query to keep the compute warm, in production only — no
+value in running this locally, since nothing but you is calling the dev
+environment.
+
+Vercel's own Cron Jobs can't help here: Hobby-plan cron jobs are capped at
+once per day, far too infrequent to matter against a 5-minute autosuspend
+window. Instead, use a free external scheduler (e.g.
+[cron-job.org](https://cron-job.org), UptimeRobot, or a scheduled GitHub
+Actions workflow) configured to hit this endpoint every 4-5 minutes:
+
+- **URL**: `https://<your-domain>/api/internal/keep-alive`
+- **Method**: `GET`
+- **Header**: `X-Keep-Alive-Secret: <KEEP_ALIVE_SECRET>`
+
+| Variable | Description |
+| --- | --- |
+| `KEEP_ALIVE_SECRET` | Shared secret checked against the `X-Keep-Alive-Secret` header. A random string of at least 16 characters is fine — a password generator works. Without it set, the endpoint always returns `401`. |
+
+This is a mitigation, not a guarantee — the `connectionTimeoutMillis` fast-fail
+in `lib/db/client.ts` is the safety net for whenever the compute still goes
+cold anyway (a paused/failed scheduler, a network blip, etc.), so a live
+caller gets a graceful TwiML message instead of dead air.
+
 ## Notes
 
 - Variables prefixed `NEXT_PUBLIC_` are inlined into the client bundle at
